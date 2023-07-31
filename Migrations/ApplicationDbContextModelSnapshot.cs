@@ -195,18 +195,18 @@ namespace JobPortal.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AppliedJobId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("InterViewDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("InterViewMode")
                         .HasColumnType("int");
 
-                    b.Property<int>("jobId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("jobId");
+                    b.HasIndex("AppliedJobId");
 
                     b.ToTable("Interviews");
                 });
@@ -524,13 +524,13 @@ namespace JobPortal.Migrations
 
             modelBuilder.Entity("JobPortal.Models.Interview", b =>
                 {
-                    b.HasOne("JobPortal.Models.Jobs", "job")
+                    b.HasOne("JobPortal.Models.AppliedJobs", "AppliedJob")
                         .WithMany()
-                        .HasForeignKey("jobId")
+                        .HasForeignKey("AppliedJobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("job");
+                    b.Navigation("AppliedJob");
                 });
 
             modelBuilder.Entity("JobPortal.Models.JobSkills", b =>

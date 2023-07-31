@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace JobPortal.Migrations
 {
     /// <inheritdoc />
-    public partial class intial : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -343,27 +343,6 @@ namespace JobPortal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Interviews",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    InterViewDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    InterViewMode = table.Column<int>(type: "int", nullable: false),
-                    jobId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Interviews", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Interviews_Jobs_jobId",
-                        column: x => x.jobId,
-                        principalTable: "Jobs",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "JobSkills",
                 columns: table => new
                 {
@@ -385,6 +364,27 @@ namespace JobPortal.Migrations
                         name: "FK_JobSkills_Skills_SkillId",
                         column: x => x.SkillId,
                         principalTable: "Skills",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Interviews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InterViewDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    InterViewMode = table.Column<int>(type: "int", nullable: false),
+                    AppliedJobId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Interviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Interviews_AppliedJobs_AppliedJobId",
+                        column: x => x.AppliedJobId,
+                        principalTable: "AppliedJobs",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -454,9 +454,9 @@ namespace JobPortal.Migrations
                 column: "LocationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Interviews_jobId",
+                name: "IX_Interviews_AppliedJobId",
                 table: "Interviews",
-                column: "jobId");
+                column: "AppliedJobId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Jobs_CompanyId",
@@ -498,9 +498,6 @@ namespace JobPortal.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AppliedJobs");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -537,13 +534,16 @@ namespace JobPortal.Migrations
                 name: "Location");
 
             migrationBuilder.DropTable(
-                name: "Jobs");
+                name: "AppliedJobs");
 
             migrationBuilder.DropTable(
                 name: "Educations");
 
             migrationBuilder.DropTable(
                 name: "Skills");
+
+            migrationBuilder.DropTable(
+                name: "Jobs");
 
             migrationBuilder.DropTable(
                 name: "Companies");

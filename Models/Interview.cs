@@ -5,6 +5,6 @@
         public int Id { get; set; }
         public DateTime InterViewDate { get; set; }
         public InterViewMode InterViewMode { get; set; }
-        public Jobs job { get; set; }
+        public AppliedJobs AppliedJob { get; set; }
     }
 }
