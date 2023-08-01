@@ -22,6 +22,7 @@ namespace JobPortal.Entities
         public DbSet<Location> Location { get; set; }
 
         public DbSet<StudentSkills> StudentSkills { get; set; }
+        public DbSet<PreferredLocation> PreferredLocations { get; set; }
 
     }
 }
