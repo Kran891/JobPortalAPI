@@ -1,4 +1,4 @@
-using JobPortal.Models;
+using JobPortal.Entities;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

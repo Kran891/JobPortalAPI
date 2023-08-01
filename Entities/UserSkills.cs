@@ -1,4 +1,4 @@
-﻿namespace JobPortal.Models
+﻿namespace JobPortal.Entities
 {
     public class UserSkills
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace JobPortal.Models
+namespace JobPortal.Entities
 {
     public class ApplicationUser:IdentityUser
     {
