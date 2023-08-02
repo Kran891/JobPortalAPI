@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(opt =>
@@ -19,13 +18,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("mysql"));
 });
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<ICompanyRepository,CompanyRepository>();
+builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 builder.Services.AddTransient<ILocationRepository, LocationRepository>();
-builder.Services.AddTransient<ISkillRespository,SkillRepository>();
+builder.Services.AddTransient<ISkillRespository, SkillRepository>();
 builder.Services.AddTransient<IStudentRepository, StudentRepository>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
+
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
 builder.Services.AddAuthentication(options =>
@@ -36,23 +36,35 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false,
-        ValidateAudience = true,
+        ValidateAudience = false,
     };
 });
+
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Student", policy => policy.RequireRole("Student"));
+    options.AddPolicy("Student", policy => policy.RequireRole("student"));
     options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
     // Add more policies as needed for other roles
 });
+
+// CORS configuration
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -61,8 +73,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseRouting();
+
+app.UseCors("AllowAnyOrigin"); // Apply CORS policy
+
 app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

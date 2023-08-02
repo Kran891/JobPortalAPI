@@ -19,7 +19,7 @@ namespace JobPortal.Repositories
 
         private readonly IConfiguration configuration;
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly PasswordHasher<ApplicationUser> passwordHasher;
+        
 
         public UserRepository(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,IConfiguration configuration){
@@ -27,7 +27,7 @@ namespace JobPortal.Repositories
             this.signInManager = signInManager;
             this.configuration = configuration;
             this.roleManager = roleManager;
-            this.passwordHasher = new PasswordHasher<ApplicationUser>();
+           
         }
         public async Task<string> InsertUser(UserModel userModel)
         {
@@ -52,7 +52,7 @@ namespace JobPortal.Repositories
         public async Task<string> LoginUser(LoginModel loginModel)
         {
             var user = await userManager.FindByEmailAsync(loginModel.Email.ToUpper());
-            string exa = passwordHasher.HashPassword(user, loginModel.Password);
+            
             var result = await userManager.CheckPasswordAsync(user,loginModel.Password);
             
             if (user == null || !result)
@@ -83,6 +83,7 @@ namespace JobPortal.Repositories
                 Subject = new System.Security.Claims.ClaimsIdentity(
                     new Claim[]
                     {
+                        new Claim(ClaimTypes.Name, user.UserName),
                         new Claim(ClaimTypes.Role, role),
                         new Claim("userid",user.Id)
                     }
