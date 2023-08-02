@@ -38,10 +38,17 @@ namespace JobPortal.Controllers
         }
         [HttpGet]
         
-        [Authorize(Policy = "RequireUserRole")]
+        [Authorize(Policy = "Student")]
+
         public async Task<IActionResult> CheckAuthrize()
         {
             return Json("Hi");
+        }
+        [HttpGet]
+        [Authorize(Policy ="Company")]
+        public async Task<IActionResult> CheckCompany()
+        {
+            return Json("Company Authorize");
         }
     }
 }
