@@ -1,5 +1,10 @@
 using JobPortal.Entities;
+using JobPortal.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +18,38 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("mysql"));
 });
-
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<ICompanyRepository,CompanyRepository>();
+builder.Services.AddTransient<ILocationRepository, LocationRepository>();
+builder.Services.AddTransient<ISkillRespository,SkillRepository>();
+builder.Services.AddTransient<IStudentRepository, StudentRepository>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = true,
+    };
+});
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Student", policy => policy.RequireRole("Student"));
+    options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
+    // Add more policies as needed for other roles
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,7 +62,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseAuthentication();
 app.MapControllers();
 
 app.Run();
