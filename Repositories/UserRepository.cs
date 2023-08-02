@@ -35,7 +35,7 @@ namespace JobPortal.Repositories
             ApplicationUser user=JsonConvert.DeserializeObject<ApplicationUser>(obj);
             user.UserName = userModel.Email.Split('@')[0];
             
-            var result=await userManager.CreateAsync(user,passwordHasher.HashPassword(user,userModel.Password));
+            var result=await userManager.CreateAsync(user,userModel.Password);
             if (result.Succeeded)
             {
 
@@ -53,9 +53,9 @@ namespace JobPortal.Repositories
         {
             var user = await userManager.FindByEmailAsync(loginModel.Email.ToUpper());
             string exa = passwordHasher.HashPassword(user, loginModel.Password);
-            Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user.UserName,loginModel.Password,false,false).ConfigureAwait(false);
+            var result = await userManager.CheckPasswordAsync(user,loginModel.Password);
             
-            if (user == null || result.Succeeded)
+            if (user == null || !result)
             {
                
                 return null;
