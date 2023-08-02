@@ -16,12 +16,18 @@ namespace JobPortal.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertUser(UserModel userModel)
         {
-            string tk=await userRepository.InsertUser(userModel);
-            if(tk != null)
+            try
             {
-                return Ok(tk);
+                string tk = await userRepository.InsertUser(userModel);
+                if (tk != null)
+                {
+                    return Ok(tk);
+                }
+                else { return BadRequest(); }
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
-            else { return BadRequest(); }
         }
         [HttpPost]
         public async Task<IActionResult> LoginUser(LoginModel loginModel)
