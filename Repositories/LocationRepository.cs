@@ -1,4 +1,5 @@
 ﻿using JobPortal.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Repositories
 {
@@ -9,6 +10,12 @@ namespace JobPortal.Repositories
         public LocationRepository(ApplicationDbContext dbContext) {
             this.dbContext=dbContext;
         }
+
+        public async Task<Location> GetLocation(string LocName)
+        {
+            return await (from l in dbContext.Location where l.Name==LocName select l).FirstOrDefaultAsync();
+        }
+
         public async Task<Location> InsertLocation(string LocName)
         {
             Location location = new Location() { Name = LocName };
