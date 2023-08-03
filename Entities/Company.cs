@@ -6,5 +6,6 @@
         public string Name { get; set; }
         public ApplicationUser Owner { get; set; }
         public virtual List<CompanyLocation> Locations { get; set; }
+
     }
 }
