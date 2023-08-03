@@ -1,12 +1,97 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JobPortal.Models;
+using JobPortal.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace JobPortal.Controllers
 {
+    [Route("[controller]/[action]")]
     public class StudentController : Controller
     {
-        public IActionResult Index()
+        private readonly IStudentRepository studentRepository;
+        public StudentController(IStudentRepository studentRepository)
         {
-            return View();
+            this.studentRepository = studentRepository;
+        }
+        [HttpPost]
+        public async Task<IActionResult> InsertStudentDetails(StudentModel studentModel)
+        {
+            try
+            {
+                return Ok(await studentRepository.InsertStudentDetails(studentModel));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Route("{location/userid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetJobsByLocation(string location, string userid)
+        {
+            try
+            {
+                return Ok(await studentRepository.GetJobsByLocation(location, userid));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [Route("{userid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllJobs(string userid)
+        {
+            try
+            {
+                return Ok(await studentRepository.GetAllJobs(userid));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [Route("{userid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetJobsByYourSkills(string userid)
+        {
+            try
+            {
+                return Ok(await studentRepository.GetJobsByYourSkills(userid));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [Route("{userid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetAppliedJobs(string userid)
+        {
+            try
+            {
+                return Ok(await studentRepository.GetAppliedJobs(userid));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [Route("{userid}")]
+        [HttpGet]
+        public async Task<IActionResult> GetInterviewsScheduled(string userid)
+        {
+            try
+            {
+                return Ok(await studentRepository.GetInterviewsScheduled(userid));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
     }
 }
