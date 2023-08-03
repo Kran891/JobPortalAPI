@@ -91,14 +91,28 @@ namespace JobPortal.Repositories
             return jobs;
         }
 
-        public Task<List<string>> GetCompanyLocations(int companyId)
+        public async Task<List<string>> GetCompanyLocations(int companyId)
         {
-            throw new NotImplementedException();
+            List<string> companyLocations=(from cl  in dbContext.CompanyLocations where cl.Company.Id==companyId select cl.Location.Name).ToList();
+            return companyLocations;
         }
 
-        public Task<List<StudentModel>> GetStudentsAppliedForJob(int jobId)
+        public async Task<List<StudentModel>> GetStudentsAppliedForJob(int jobId)
         {
-            throw new NotImplementedException();
+            List<StudentModel> appliedJobs=(from Aj in dbContext.AppliedJobs where Aj.Job.Id ==jobId 
+                                            select new StudentModel
+                                            {
+                                                StudentId=Aj.User.Id,
+                                                Resume=Aj.User.Resume,
+                                                FullName=Aj.User.FullName,
+                                                studentskills=(from sk in dbContext.StudentSkills where sk.user.Id==Aj.User.Id
+                                                               select sk.skill.Name).ToList(),
+                                                preferredLocations=(from pl in dbContext.PreferredLocations where pl.User.Id==Aj.User.Id
+                                                                    select pl.Location.Name).ToList()
+
+                                            }
+                                            ).ToList();
+            return appliedJobs;
         }
 
         public Task<List<StudentModel>> GetSuggestionsForRole(int jobId)
