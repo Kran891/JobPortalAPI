@@ -69,16 +69,15 @@ namespace JobPortal.Repositories
 
         public async Task<List<JobModel>> GetAllJobsByCompanyLocation(int companyId, string location)
         {
-            List<JobModel> jobs = await(from c in dbContext.Companies
-                                        join j in dbContext.Jobs on c.Id equals j.Company.Id
-                                        join js in dbContext.JobSkills on j.Id equals js.job.Id
-                                        join cl in dbContext.CompanyLocations on c.Id equals cl.Company.Id
-                                        where c.Id == companyId &&
+            List<JobModel> jobs = await(from js in dbContext.JobSkills
+                                        join j in dbContext.Jobs on js.job.Id equals j.Id
+                                        join cl in dbContext.CompanyLocations on j.Company.Id equals cl.Company.Id
+                                        where j.Company.Id == companyId &&
                                         cl.Location.Name.Trim().ToLower() == location.Trim().ToLower()
                                         select new JobModel
                                         {
-                                            CompanyId = c.Id,
-                                            CompanyName = c.Name,
+                                            CompanyId = j.Company.Id,
+                                            CompanyName = j.Company.Name,
                                             Salary = j.Salary,
                                             RequiredSkills = (from rs in dbContext.JobSkills where rs.job == j select rs.Skill.Name).ToList(),
                                             Title = j.Title,
