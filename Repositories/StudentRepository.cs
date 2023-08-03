@@ -1,6 +1,7 @@
 ﻿using JobPortal.Entities;
 using JobPortal.Models;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 
 namespace JobPortal.Repositories
 {
@@ -8,10 +9,13 @@ namespace JobPortal.Repositories
     {
         private readonly ApplicationDbContext dbContext;
         private readonly ISkillRespository skillRespository;
-        public StudentRepository(ApplicationDbContext dbContext, ISkillRespository skillRespository)
+        private readonly ICompanyRepository companyRepository;
+
+        public StudentRepository(ApplicationDbContext dbContext, ISkillRespository skillRespository, ICompanyRepository companyRepository)
         {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
+            this.companyRepository = companyRepository;
         }
 
         public Task<int> ApplyJob(int jobId)
@@ -48,22 +52,36 @@ namespace JobPortal.Repositories
         public async Task<List<JobModel>> GetInterviewsScheduled(string userid)
         {
             List<JobModel> interviews = (from i in dbContext.Interviews
-                                         join c in dbContext.Companies on i.AppliedJob.Job.Company.Id equals c.Id 
-                                         where i.AppliedJob.User.Id == userid
+                                         join c in dbContext.Companies on i.AppliedJob.Job.Company.Id equals c.Id
+                                         where i.AppliedJob.User.Id == userid && i.InterViewDate.Date >= DateTime.Now.Date
                                          select new JobModel
                                          {
                                              JobId = i.AppliedJob.Job.Id,
-                                             
+                                             InterViewDate = i.InterViewDate,
+                                             InterViewMode = i.InterViewMode.ToString(),
+                                             CompanyName = c.Name,
+                                             CompanyId = c.Id,
+                                             Title = i.AppliedJob.Job.Title,
+                                             Description = i.AppliedJob.Job.Description,
+                                             Salary = i.AppliedJob.Job.Salary,
+                                             Locations = (from cl in dbContext.CompanyLocations where cl.Company.Id == c.Id select cl.Location.Name).ToList()
                                          }
-
-                                        ).ToList();
+                                         ).ToList();
             return interviews;
 
         }
 
-        public Task<List<JobModel>> GetJobsByLocation(string location, string userid)
+        public async Task<List<JobModel>> GetJobsByLocation(string location, string userid)
         {
-            throw new NotImplementedException();
+            List<JobModel> Location = (from l in dbContext.Location
+                                       select new JobModel
+                                       {
+                                           CompanyId = l.Id,
+                                           CompanyName=l.Name,
+                                           JobId = l.Id,
+                                       }
+                                       ).ToList();
+            return Location;
         }
 
         public Task<List<JobModel>> GetJobsByYourSkills(string userid)

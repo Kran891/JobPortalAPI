@@ -13,5 +13,9 @@ namespace JobPortal.Models
         public  List<string> RequiredSkills { get; set; }
         public int NoOfApplicants { get;  set; }
         public List<string> Locations { get;  set; }
+
+        public DateTime InterViewDate { get; set; }
+
+        public string InterViewMode { get; set; }
     }
 }
