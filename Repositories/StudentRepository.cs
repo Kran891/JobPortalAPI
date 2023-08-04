@@ -43,32 +43,41 @@ namespace JobPortal.Repositories
         public async Task<List<JobModel>> GetAllJobs(string userid)
         {
             List<JobModel> jobModels = await GetJobsByYourSkills(userid);
-            
-            List<string> preferredLocations=await (from pl in dbContext.PreferredLocations where pl.User.Id == userid select pl.Location.Name).ToListAsync();
+
+            List<string> preferredLocations = await (from pl in dbContext.PreferredLocations
+                                                     where pl.User.Id == userid
+                                                     select pl.Location.Name).ToListAsync();
+
             if (preferredLocations != null && preferredLocations.Any())
             {
                 jobModels = jobModels.Where(jm => jm.Locations.Intersect(preferredLocations).Any()).ToList();
-               
             }
-            if (jobModels == null)
+
+            if (jobModels == null || jobModels.Count == 0) 
             {
                 jobModels = (
-                                             from jk in dbContext.JobSkills
-                                             
-                                             select new JobModel
-                                             {
-                                                 JobId = jk.job.Id,
-                                                 Title = jk.job.Title,
-                                                 Description = jk.job.Description,
-                                                 CompanyId = jk.job.Company.Id,
-                                                 CompanyName = jk.job.Company.Name,
-                                                 Salary = jk.job.Salary,
-                                                 RequiredSkills = (from js in dbContext.JobSkills where js.job.Id ==jk.job.Id select js.Skill.Name).ToList(),
-                                             }
-                                         ).ToList();
+                    from j in dbContext.Jobs
+                    join c in dbContext.Companies on j.Company.Id equals c.Id
+                    select new JobModel
+                    {
+                        JobId = j.Id,
+                        Title = j.Title,
+                        Description = j.Description,
+                        CompanyId = c.Id,
+                        CompanyName = c.Name,
+                        Salary = j.Salary,
+                        RequiredSkills = (
+                            from js in dbContext.JobSkills
+                            where js.job.Id == j.Id
+                            select js.Skill.Name
+                        ).ToList()
+                    }
+                ).ToList();
             }
+
             return jobModels;
         }
+
 
         public async Task<List<JobModel>> GetAppliedJobs(string userid)
         {
