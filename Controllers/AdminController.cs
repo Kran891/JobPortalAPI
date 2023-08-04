@@ -17,7 +17,7 @@ namespace JobPortal.Controllers
         }
         [HttpGet]
         //[HttpGet]
-        [Authorize(Policy = "Admin")]
+       // [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetAllUnverifiedCompanies()
         {
             try
@@ -33,7 +33,7 @@ namespace JobPortal.Controllers
        [Route("{CompanyId}")]
         [HttpGet]
         //[HttpGet]
-        [Authorize(Policy = "Admin")]
+       // [Authorize(Policy = "Admin")]
 
         public async Task<IActionResult> VerifyCompany(int CompanyId)
         {
@@ -50,7 +50,7 @@ namespace JobPortal.Controllers
        
         [HttpGet]
        // [HttpGet]
-        [Authorize(Policy = "Company")]
+       // [Authorize(Policy = "Company")]
 
         public async Task<IActionResult> GetJobPostedToday()
         {
@@ -66,7 +66,7 @@ namespace JobPortal.Controllers
        
         [HttpGet]
         //[HttpGet]
-        [Authorize(Policy = "Admin")]
+       // [Authorize(Policy = "Admin")]
 
         public async Task<IActionResult> GetCompanies()
         {
