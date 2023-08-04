@@ -6,6 +6,7 @@
         public string Description { get; set; }
         public string OwnerId { get; set; }
         public int CompanyId { get; set; }
-        List<string> CompanyLocations { get; set; }
+        public string OwnerName { get; set; }
+       public List<string> CompanyLocations { get; set; }
     }
 }

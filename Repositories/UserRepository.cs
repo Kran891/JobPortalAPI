@@ -31,7 +31,15 @@ namespace JobPortal.Repositories
         }
         public async Task<string> InsertUser(UserModel userModel)
         {
-            string obj=JsonConvert.SerializeObject(userModel);
+            if (!await roleManager.RoleExistsAsync("admin"))
+                {
+                await roleManager.CreateAsync(new IdentityRole("admin"));
+                ApplicationUser admin=new ApplicationUser() { UserName="admin" ,FirstName="admin",LastName="admin",Email="admin@gmail.com"};
+                var result1 = await userManager.CreateAsync(admin, "Admin@1234");
+                await userManager.AddToRoleAsync(admin, "admin");
+
+            }
+                string obj=JsonConvert.SerializeObject(userModel);
             ApplicationUser user=JsonConvert.DeserializeObject<ApplicationUser>(obj);
             user.UserName = userModel.Email.Split('@')[0];
             

@@ -1,4 +1,6 @@
-﻿namespace JobPortal.Entities
+﻿using System.Xml;
+
+namespace JobPortal.Entities
 {
     public class Jobs
     {
@@ -8,5 +10,7 @@
         public Company Company { get; set; }
         public double Salary { get; set; }
         public virtual List<JobSkills> RequiredSkills { get; set; }
+
+        public DateTime PostedDate { get; set; }
     }
 }

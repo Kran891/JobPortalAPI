@@ -22,6 +22,7 @@ builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 builder.Services.AddTransient<ILocationRepository, LocationRepository>();
 builder.Services.AddTransient<ISkillRespository, SkillRepository>();
 builder.Services.AddTransient<IStudentRepository, StudentRepository>();
+builder.Services.AddTransient<IAdminRepository, AdminRepository>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
@@ -49,6 +50,7 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Student", policy => policy.RequireRole("student"));
     options.AddPolicy("Company", policy => policy.RequireRole("company"));
+    options.AddPolicy("Admin", policy => policy.RequireRole("admin"));
     // Add more policies as needed for other roles
 });
 

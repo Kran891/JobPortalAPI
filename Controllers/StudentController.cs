@@ -24,7 +24,7 @@ namespace JobPortal.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [Route("{location/userid}")]
+        [Route("{location}/{userid}")]
         [HttpGet]
         public async Task<IActionResult> GetJobsByLocation(string location, string userid)
         {
