@@ -10,7 +10,7 @@ namespace JobPortal.Entities
         public Company Company { get; set; }
         public double Salary { get; set; }
         public virtual List<JobSkills> RequiredSkills { get; set; }
-
+        public bool DeleteStatus { get; set; }
         public DateTime PostedDate { get; set; }
     }
 }

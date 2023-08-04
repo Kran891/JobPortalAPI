@@ -9,6 +9,7 @@ namespace JobPortal.Entities
         public int Age { get; set; }
         public string? Resume { get; set; }
         public string FullName => $"{FirstName} {LastName}";
+        public bool DeleteStatus { get; set; }
         public virtual List<UserSkills> Skills { get; set; }
 
         }
