@@ -29,8 +29,5 @@ namespace JobPortal.Repositories
         }
     }
 
-    internal class Job
-    {
-        public ApplicationUser Description { get; set; }
-    }
+    
 }

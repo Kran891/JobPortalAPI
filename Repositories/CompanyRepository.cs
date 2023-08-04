@@ -16,18 +16,23 @@ namespace JobPortal.Repositories
         }
         public async Task<int> AddJob(JobModel jobModel)
         {
-           Company company=(from c in dbContext.Companies where c.Id==jobModel.CompanyId select c).FirstOrDefault(); 
+           Jobs? job=await(from j in dbContext.Jobs where j.Title.ToLower()==jobModel.Title.ToLower() select j).FirstOrDefaultAsync();
+            if (job != null)
+            {
+                return -1;
+            }
+           Company? company=(from c in dbContext.Companies where c.Id==jobModel.CompanyId select c).FirstOrDefault(); 
            string obj=JsonConvert.SerializeObject(jobModel);
-           Jobs jobs=JsonConvert.DeserializeObject<Jobs>(obj);
+           Jobs? jobs=JsonConvert.DeserializeObject<Jobs>(obj);
             jobs.Company = company;
            dbContext.Jobs.Add(jobs);
             JobSkills jobSkill;
             List<JobSkills> skills = new List<JobSkills>();
            foreach(string skill in jobModel.RequiredSkills)
             {
-                Skills requireSkill = await skillRespository.GetSKill(skill);
+                Skills requireSkill = await skillRespository.GetSKill(skill.ToLower());
                 if(requireSkill == null) {
-                    requireSkill = await skillRespository.InsertSkill(skill);
+                    requireSkill = await skillRespository.InsertSkill(skill.ToLower());
                 }
                 jobSkill=new JobSkills() { job=jobs,Skill=requireSkill};
                 skills.Add(jobSkill);
@@ -92,7 +97,7 @@ namespace JobPortal.Repositories
 
         public async Task<List<string>> GetCompanyLocations(int companyId)
         {
-            List<string> companyLocations=(from cl  in dbContext.CompanyLocations where cl.Company.Id==companyId select cl.Location.Name).ToList();
+            List<string> companyLocations=await(from cl  in dbContext.CompanyLocations where cl.Company.Id==companyId select cl.Location.Name).ToListAsync();
             return companyLocations;
         }
 
@@ -114,9 +119,19 @@ namespace JobPortal.Repositories
             return appliedJobs;
         }
 
-        public Task<List<StudentModel>> GetSuggestionsForRole(int jobId)
+        public async Task<List<StudentModel>> GetSuggestionsForRole(int jobId)
         {
-            throw new NotImplementedException();
+            List<StudentModel> studentModels = (from jk in dbContext.JobSkills
+                                                join sk in dbContext.StudentSkills on jk.Skill.Id equals sk.skill.Id
+                                                group sk by sk.user into studentSkillGroup
+                                                where studentSkillGroup.Count() > 2
+                                                select new StudentModel
+                                                {
+                                                    FullName=studentSkillGroup.Key.FullName,
+                                                    studentskills=(from sk in dbContext.StudentSkills where sk.user.Id ==studentSkillGroup.Key.Id select sk.skill.Name).ToList()
+                                                }
+                                                ).ToList();
+            return studentModels;
         }
     }
 }
