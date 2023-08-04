@@ -1,5 +1,6 @@
 ﻿using JobPortal.Entities;
 using JobPortal.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 
@@ -10,22 +11,63 @@ namespace JobPortal.Repositories
         private readonly ApplicationDbContext dbContext;
         private readonly ISkillRespository skillRespository;
         private readonly ICompanyRepository companyRepository;
+        private readonly ILocationRepository locationRepository;
 
-        public StudentRepository(ApplicationDbContext dbContext, ISkillRespository skillRespository, ICompanyRepository companyRepository)
+        public StudentRepository(ApplicationDbContext dbContext, ISkillRespository skillRespository, ICompanyRepository companyRepository, ILocationRepository locationRepository)
         {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
             this.companyRepository = companyRepository;
+            this.locationRepository = locationRepository;
         }
 
-        public Task<int> ApplyJob(int jobId)
+        public async Task<int> ApplyJob(int jobId, string userId)
         {
-            throw new NotImplementedException();
+            AppliedJobs appliedJob = (from aj in dbContext.AppliedJobs where aj.User.Id == userId select aj).FirstOrDefault();
+            if (appliedJob != null)
+            {
+                ApplicationUser user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
+                Jobs job = dbContext.Jobs.FirstOrDefault(x => x.Id == jobId);
+                appliedJob = new AppliedJobs()
+                {
+                    User = user,
+                    Job = job
+                };
+                dbContext.AppliedJobs.Add(appliedJob);
+                await dbContext.SaveChangesAsync();
+                return 1;
+            }
+            return -1;
         }
 
-        public Task<List<JobModel>> GetAllJobs(string userid)
+        public async Task<List<JobModel>> GetAllJobs(string userid)
         {
-            throw new NotImplementedException();
+            List<JobModel> jobModels = await GetJobsByYourSkills(userid);
+            
+            List<string> preferredLocations=await (from pl in dbContext.PreferredLocations where pl.User.Id == userid select pl.Location.Name).ToListAsync();
+            if (preferredLocations != null && preferredLocations.Any())
+            {
+                jobModels = jobModels.Where(jm => jm.Locations.Intersect(preferredLocations).Any()).ToList();
+               
+            }
+            if (jobModels == null)
+            {
+                jobModels = (
+                                             from jk in dbContext.JobSkills
+                                             
+                                             select new JobModel
+                                             {
+                                                 JobId = jk.job.Id,
+                                                 Title = jk.job.Title,
+                                                 Description = jk.job.Description,
+                                                 CompanyId = jk.job.Company.Id,
+                                                 CompanyName = jk.job.Company.Name,
+                                                 Salary = jk.job.Salary,
+                                                 RequiredSkills = jk.Select(js => js.Skill.Name).ToList()
+                                             }
+                                         ).ToList();
+            }
+            return jobModels;
         }
 
         public async Task<List<JobModel>> GetAppliedJobs(string userid)
@@ -84,9 +126,27 @@ namespace JobPortal.Repositories
             return Location;
         }
 
-        public Task<List<JobModel>> GetJobsByYourSkills(string userid)
+        public async Task<List<JobModel>> GetJobsByYourSkills(string userid)
         {
-            throw new NotImplementedException();
+            List<string> studentSkills = (from sk in dbContext.StudentSkills where sk.user.Id == userid select sk.skill.Name).ToList();
+
+            List<JobModel> jobModels = (
+                                             from jk in dbContext.JobSkills
+                                             where studentSkills.Contains(jk.Skill.Name)
+                                             group jk by jk.job into jobSkillGroup
+                                             where jobSkillGroup.Count() >= 2
+                                             select new JobModel
+                                             {
+                                                 JobId = jobSkillGroup.Key.Id,
+                                                 Title = jobSkillGroup.Key.Title,
+                                                 Description = jobSkillGroup.Key.Description,
+                                                 CompanyId = jobSkillGroup.Key.Company.Id,
+                                                 CompanyName = jobSkillGroup.Key.Company.Name,
+                                                 Salary = jobSkillGroup.Key.Salary,
+                                                 RequiredSkills = jobSkillGroup.Select(js => js.Skill.Name).ToList()
+                                             }
+                                         ).ToList();
+            return jobModels;
         }
 
         public async Task<ApplicationUser> InsertStudentDetails(StudentModel studentModel)
@@ -115,10 +175,10 @@ namespace JobPortal.Repositories
                 
                
             }
-            
+            List<PreferredLocation> PreferredLocations = new List<PreferredLocation>();
             foreach (string place in studentModel.preferredLocations)
             {
-
+                
             }
             dbContext.StudentSkills.AddRange(studentSkills);
             dbContext.SaveChanges();
