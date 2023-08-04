@@ -29,7 +29,7 @@ namespace JobPortal.Repositories
             this.roleManager = roleManager;
            
         }
-        public async Task<string> InsertUser(UserModel userModel)
+        public async Task<object> InsertUser(UserModel userModel)
         {
             if (!await roleManager.RoleExistsAsync("admin"))
                 {
@@ -52,12 +52,12 @@ namespace JobPortal.Repositories
                     await roleManager.CreateAsync(new IdentityRole(userModel.Role.Trim().ToLower()));
                 }
                 await userManager.AddToRoleAsync(user, userModel.Role);
-                return JWTTokenGenerator(user, userModel.Role);
+                return new  {tokent= JWTTokenGenerator(user, userModel.Role.Trim().ToLower()),userId=user.Id};
             }
             else return null;
         }
 
-        public async Task<string> LoginUser(LoginModel loginModel)
+        public async Task<object> LoginUser(LoginModel loginModel)
         {
             var user = await userManager.FindByEmailAsync(loginModel.Email.ToUpper());
             
@@ -72,7 +72,7 @@ namespace JobPortal.Repositories
             {
                 var roles = await userManager.GetRolesAsync(user);
 
-                return JWTTokenGenerator(user, roles.FirstOrDefault());
+                return new  {tokent= JWTTokenGenerator(user, roles.FirstOrDefault()),userId=user.Id};
             }
 
         }

@@ -18,7 +18,7 @@ namespace JobPortal.Controllers
         {
             try
             {
-                string tk = await userRepository.InsertUser(userModel);
+                Object tk = await userRepository.InsertUser(userModel);
                 if (tk != null)
                 {
                     return Ok(tk);
@@ -32,7 +32,7 @@ namespace JobPortal.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginUser(LoginModel loginModel)
             {
-            string tk= await userRepository.LoginUser(loginModel);
+            Object tk= await userRepository.LoginUser(loginModel);
             if(tk != null)
             {
                 return Ok(tk);

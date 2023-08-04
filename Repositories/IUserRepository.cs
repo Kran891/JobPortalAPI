@@ -5,7 +5,7 @@ namespace JobPortal.Repositories
 {
     public interface IUserRepository
     {
-        Task<string> InsertUser(UserModel userModel);
-        Task<string> LoginUser(LoginModel loginModel);
+        Task<Object> InsertUser(UserModel userModel);
+        Task<Object> LoginUser(LoginModel loginModel);
     }
 }

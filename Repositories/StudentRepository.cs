@@ -185,10 +185,18 @@ namespace JobPortal.Repositories
                
             }
             List<PreferredLocation> PreferredLocations = new List<PreferredLocation>();
+            PreferredLocation preferredLocation;
             foreach (string place in studentModel.preferredLocations)
             {
-                
+                Location location=await locationRepository.GetLocation(place);
+                if(location == null)
+                {
+                    location=await locationRepository.InsertLocation(place.ToLower());
+                }
+                preferredLocation = new PreferredLocation() { Location = location,User=user };
+                PreferredLocations.Add(preferredLocation);
             }
+            dbContext.PreferredLocations.AddRange(PreferredLocations);
             dbContext.StudentSkills.AddRange(studentSkills);
             dbContext.SaveChanges();
             return user;

@@ -9,10 +9,12 @@ namespace JobPortal.Repositories
     {
         private readonly ApplicationDbContext dbContext;
         private readonly ISkillRepository skillRespository;
+        private readonly ILocationRepository locationRepository;
 
-        public CompanyRepository(ApplicationDbContext dbContext, ISkillRepository skillRespository) {
+        public CompanyRepository(ApplicationDbContext dbContext, ISkillRepository skillRespository,ILocationRepository locationRepository) {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
+            this.locationRepository = locationRepository;
         }
         public async Task<int> AddJob(JobModel jobModel)
         {
@@ -132,6 +134,33 @@ namespace JobPortal.Repositories
                                                 }
                                                 ).ToList();
             return studentModels;
+        }
+
+        public async Task<int> InsertCompany(CompanyModel company)
+        {
+            ApplicationUser user =await (from u in dbContext.Users where u.Id == company.OwnerId select u).FirstOrDefaultAsync();
+            string obj = JsonConvert.SerializeObject(company);
+            Company company1 = JsonConvert.DeserializeObject<Company>(obj);
+            company1.Owner = user;
+            company1.Status = false;
+            dbContext.Companies.Add(company1);
+            List<CompanyLocation> companyLocations = new List<CompanyLocation>();
+            PreferredLocation preferredLocation;
+            foreach (string place in company.CompanyLocations)
+            {
+                Location location = await locationRepository.GetLocation(place);
+                if (location == null)
+                {
+                    location = await locationRepository.InsertLocation(place.ToLower());
+                }
+                CompanyLocation companyLocation = new CompanyLocation() { Location = location, Company = company1 };
+                companyLocations.Add(companyLocation);
+            }
+            dbContext.CompanyLocations.AddRange(companyLocations);
+            dbContext.SaveChanges();
+            if (company1 == null)
+                return -1;
+            return company1.Id;
         }
     }
 }
