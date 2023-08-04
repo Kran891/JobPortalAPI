@@ -2,9 +2,10 @@
 
 namespace JobPortal.Repositories
 {
-    public interface ISkillRespository
+    public interface ISkillRepository
     {
         Task<Skills> InsertSkill(string skillname);
-        Task<Skills> GetSKill(string skillname);
+        Task<Skills> GetSkill(string skillname);
+        Task<List<string>> GetAllSkillsAsync();
     }
 }
