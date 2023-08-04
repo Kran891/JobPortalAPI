@@ -8,9 +8,9 @@ namespace JobPortal.Repositories
     public class CompanyRepository : ICompanyRepository
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly ISkillRespository skillRespository;
+        private readonly ISkillRepository skillRespository;
 
-        public CompanyRepository(ApplicationDbContext dbContext,ISkillRespository skillRespository) {
+        public CompanyRepository(ApplicationDbContext dbContext, ISkillRepository skillRespository) {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
         }
@@ -30,7 +30,7 @@ namespace JobPortal.Repositories
             List<JobSkills> skills = new List<JobSkills>();
            foreach(string skill in jobModel.RequiredSkills)
             {
-                Skills requireSkill = await skillRespository.GetSKill(skill.ToLower());
+                Skills requireSkill = await skillRespository.GetSkill(skill.ToLower());
                 if(requireSkill == null) {
                     requireSkill = await skillRespository.InsertSkill(skill.ToLower());
                 }

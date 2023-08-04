@@ -20,7 +20,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
 builder.Services.AddTransient<ILocationRepository, LocationRepository>();
-builder.Services.AddTransient<ISkillRespository, SkillRepository>();
+builder.Services.AddTransient<ISkillRepository, SkillRepository>();
 builder.Services.AddTransient<IStudentRepository, StudentRepository>();
 builder.Services.AddTransient<IAdminRepository, AdminRepository>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

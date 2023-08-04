@@ -9,11 +9,11 @@ namespace JobPortal.Repositories
     public class StudentRepository : IStudentRepository
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly ISkillRespository skillRespository;
+        private readonly ISkillRepository skillRespository;
         private readonly ICompanyRepository companyRepository;
         private readonly ILocationRepository locationRepository;
 
-        public StudentRepository(ApplicationDbContext dbContext, ISkillRespository skillRespository, ICompanyRepository companyRepository, ILocationRepository locationRepository)
+        public StudentRepository(ApplicationDbContext dbContext, ISkillRepository skillRespository, ICompanyRepository companyRepository, ILocationRepository locationRepository)
         {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
@@ -168,7 +168,7 @@ namespace JobPortal.Repositories
             StudentSkills studentSkill;
             foreach (string skill in studentModel.studentskills)
             {
-                Skills cskill = await skillRespository.GetSKill(skill);
+                Skills cskill = await skillRespository.GetSkill(skill);
                 if (cskill == null)
                 {
                     cskill = await skillRespository.InsertSkill(skill);

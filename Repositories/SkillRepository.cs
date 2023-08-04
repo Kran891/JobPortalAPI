@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using JobPortal.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace JobPortal.Repositories
 {
@@ -15,21 +16,20 @@ namespace JobPortal.Repositories
 
         public async Task<List<string>> GetAllSkills(string userid)
         {
-            List<string> skillnames= ( from sk in dbcontext.Skills
-                                       where sk.user.Id == userid
+            List<string> skillnames= ( from sk in dbcontext.StudentSkills
+                                       where sk.user.Id == userid select sk.skill.Name
+
                                        ).ToList();
+            return skillnames;
         }
 
-        public async Task<Skills> GetSKill(string skillname)
+        public async Task<Skills> GetSkill(string skillname)
         {
           Skills skill=(from sk in dbcontext.Skills where sk.Name == skillname select sk).FirstOrDefault<Skills>();
             return skill;
         }
 
-        public Task<Skills> GetSkill(string skillname)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public Task<Skills> InsertSkill(string skillname)
         {
