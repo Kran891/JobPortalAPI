@@ -96,6 +96,16 @@ namespace JobPortal.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        public async Task<IActionResult> InsertCompany(CompanyModel company)
+        {
+            try
+            {
+                return Ok(await companyRepository.InsertCompany(company));
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }
