@@ -96,6 +96,7 @@ namespace JobPortal.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost]
         public async Task<IActionResult> InsertCompany(CompanyModel company)
         {
             try
