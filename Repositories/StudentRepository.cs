@@ -63,7 +63,7 @@ namespace JobPortal.Repositories
                                                  CompanyId = jk.job.Company.Id,
                                                  CompanyName = jk.job.Company.Name,
                                                  Salary = jk.job.Salary,
-                                                 RequiredSkills = jk.Select(js => js.Skill.Name).ToList()
+                                                 RequiredSkills = (from js in dbContext.JobSkills where js.job.Id ==jk.job.Id select js.Skill.Name).ToList(),
                                              }
                                          ).ToList();
             }
