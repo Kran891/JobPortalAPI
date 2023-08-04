@@ -2,6 +2,10 @@
 
 using JobPortal.Entities;
 using JobPortal.Models;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using System.Buffers.Text;
 
 namespace JobPortal.Repositories
 {
@@ -62,12 +66,33 @@ namespace JobPortal.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<CompanyModel>> GetJobPostedToday()
+        public async Task<List<JobModel>> GetJobPostedToday()
         {
-            throw new NotImplementedException();
-        }
+            DateTime today = DateTime.Today;
 
-        public async Task<int> VerifyCompany(int CompanyId)
+            List<JobModel> jobsPostedToday = await(
+                from job in dbContext.Jobs
+                where job.PostedDate.Date == today && !job.DeleteStatus
+                select new JobModel
+                {
+                    JobId=job.Id,
+                    Title = job.Title,
+                    Description = job.Description,
+                    CompanyName = job.Company.Name,
+                    Salary = job.Salary,
+                    RequiredSkills = (from rs in dbContext.JobSkills where job.Id == rs.job.Id select rs.Skill.Name).ToList(),
+                    //RequiredSkills = job.RequiredSkills, 
+                   // DeleteStatus = job.DeleteStatus,
+                    PostedDate = job.PostedDate
+                }
+            ).ToListAsync();
+
+            return jobsPostedToday;
+        }
+    
+  
+
+public async Task<int> VerifyCompany(int CompanyId)
         {
             Company company = (from c in dbContext.Companies
                                where c.Id == CompanyId

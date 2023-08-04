@@ -15,6 +15,7 @@ namespace JobPortal.Models
         public List<string> Locations { get;  set; }
 
         public DateTime InterViewDate { get; set; }
+        public DateTime PostedDate { get; set; }
 
         public string InterViewMode { get; set; }
     }

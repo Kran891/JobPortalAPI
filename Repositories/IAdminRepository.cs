@@ -6,8 +6,10 @@ namespace JobPortal.Repositories
     {
         Task<List<CompanyModel>> GetAllUnverifiedCompanies();
         Task<int> VerifyCompany(int CompanyId) ;
-        Task<List<CompanyModel>> GetJobPostedToday();
         Task<List<CompanyModel>> GetCompanies();
-       
+        //Task<List<jobModel>> GetCompanies();
+        Task<List<JobModel>> GetJobPostedToday();
+
+
     }
 }
