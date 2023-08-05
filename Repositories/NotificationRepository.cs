@@ -8,8 +8,8 @@ namespace JobPortal.Repositories
     {
         private readonly ApplicationDbContext dbContext;
 
-        public NotificationRepository(ApplicationDbContext dbContext) {
-          this.dbContext=dbContext;
+        public NotificationRepository( ) {
+          this.dbContext=new ApplicationDbContext();
         }
         public async Task<int> CreateNotification(string userId, string msg)
         {

@@ -153,6 +153,7 @@ namespace JobPortal.Repositories
             company1.Owner = user;
             company1.Status = false;
             dbContext.Companies.Add(company1);
+            dbContext.SaveChanges();
             await CreateNotification(user, company1);
             List<CompanyLocation> companyLocations = new List<CompanyLocation>();
             PreferredLocation preferredLocation;
