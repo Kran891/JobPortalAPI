@@ -6,6 +6,7 @@ namespace JobPortal.Repositories
     {
         Task<int> AddJob(JobModel jobModel);
         Task<int> InsertCompany(CompanyModel company);
+        Task<int> ScheduleInterview(InterViewModel interViewModel);
         Task<List<JobModel>> GetAllJobsByCompanyId(int companyId);
         Task<List<JobModel>> GetAllJobsByCompanyLocation(int companyId,string location);
         Task<List<StudentModel>> GetStudentsAppliedForJob(int jobId);

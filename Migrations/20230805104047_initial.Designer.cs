@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobPortal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230804085457_intial")]
-    partial class intial
+    [Migration("20230805104047_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -315,6 +315,12 @@ namespace JobPortal.Migrations
 
                     b.Property<DateTime>("ReceivedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusMode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace JobPortal.Controllers
 {
     [Route("[controller]/[action]")]
+    [Authorize(Policy ="Company")]
     public class CompanyController : Controller
     {
         private readonly ICompanyRepository companyRepository;
@@ -17,6 +18,7 @@ namespace JobPortal.Controllers
         }
 
         [HttpPost]
+
         public async Task<IActionResult> AddJob(JobModel jobModel)
         {
             try

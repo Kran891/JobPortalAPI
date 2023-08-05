@@ -1,10 +1,13 @@
 ﻿using JobPortal.Models;
 using JobPortal.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobPortal.Controllers
 {
+
     [Route("[controller]/[action]")]
+    [Authorize(Policy ="Student")]
     public class StudentController : Controller
     {
         private readonly IStudentRepository studentRepository;
@@ -92,6 +95,19 @@ namespace JobPortal.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+        [Route("{skillName}/{userId}")]
+        [HttpGet]
+
+        public async Task<IActionResult> InsertSkill(string skillName, string userId)
+        {
+            try
+            {
+                return Ok(await studentRepository.InsertSkill(skillName, userId));
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -12,13 +12,15 @@ namespace JobPortal.Repositories
         private readonly ISkillRepository skillRespository;
         private readonly ICompanyRepository companyRepository;
         private readonly ILocationRepository locationRepository;
+        private readonly INotificationRepository notificationRepository;
 
-        public StudentRepository(ApplicationDbContext dbContext, ISkillRepository skillRespository, ICompanyRepository companyRepository, ILocationRepository locationRepository)
+        public StudentRepository(ApplicationDbContext dbContext,INotificationRepository notificationRepository, ISkillRepository skillRespository, ICompanyRepository companyRepository, ILocationRepository locationRepository)
         {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
             this.companyRepository = companyRepository;
             this.locationRepository = locationRepository;
+            this.notificationRepository = notificationRepository;
         }
 
         public async Task<int> ApplyJob(int jobId, string userId)
@@ -27,14 +29,22 @@ namespace JobPortal.Repositories
             if (appliedJob != null)
             {
                 ApplicationUser user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
-                Jobs job = dbContext.Jobs.FirstOrDefault(x => x.Id == jobId);
+                var job = (from j in dbContext.Jobs
+                           where j.Id == jobId
+                           select new
+                           {
+                               job=j,
+                               ownerId=j.Company.Owner.Id
+                           }).FirstOrDefault();
                 appliedJob = new AppliedJobs()
                 {
                     User = user,
-                    Job = job
+                    Job = job.job
                 };
                 dbContext.AppliedJobs.Add(appliedJob);
                 await dbContext.SaveChangesAsync();
+                string msg = $"An Applicant have Applied for the role {job.job.Title}.You Can check his profile Profile & Proceed Further";
+                notificationRepository.CreateNotification(msg, job.ownerId);
                 return 1;
             }
             return -1;
@@ -43,37 +53,20 @@ namespace JobPortal.Repositories
         public async Task<List<JobModel>> GetAllJobs(string userid)
         {
             List<JobModel> jobModels = await GetJobsByYourSkills(userid);
-
+            List<JobModel> jobModels1;
             List<string> preferredLocations = await (from pl in dbContext.PreferredLocations
                                                      where pl.User.Id == userid
                                                      select pl.Location.Name).ToListAsync();
 
             if (preferredLocations != null && preferredLocations.Any())
             {
-                jobModels = jobModels.Where(jm => jm.Locations.Intersect(preferredLocations).Any()).ToList();
+                jobModels1 = jobModels.Where(jm => jm.Locations.Intersect(preferredLocations).Any()).ToList();
+                if (jobModels1.Count>1)
+                {
+                    return jobModels1;
+                }
             }
-
-            if (jobModels == null || jobModels.Count == 0) 
-            {
-                jobModels = (
-                    from j in dbContext.Jobs
-                    join c in dbContext.Companies on j.Company.Id equals c.Id
-                    select new JobModel
-                    {
-                        JobId = j.Id,
-                        Title = j.Title,
-                        Description = j.Description,
-                        CompanyId = c.Id,
-                        CompanyName = c.Name,
-                        Salary = j.Salary,
-                        RequiredSkills = (
-                            from js in dbContext.JobSkills
-                            where js.job.Id == j.Id
-                            select js.Skill.Name
-                        ).ToList()
-                    }
-                ).ToList();
-            }
+            
 
             return jobModels;
         }
@@ -84,6 +77,7 @@ namespace JobPortal.Repositories
             List<JobModel> appliedJobs = (from aj in dbContext.AppliedJobs
                                           join c in dbContext.Companies on aj.Job.Company.Id equals c.Id
                                           where aj.User.Id == userid 
+                                          && !aj.Job.DeleteStatus && !c.DeleteStatus
                                           select new JobModel
                                           {
                                               JobId=aj.Job.Id,
@@ -104,7 +98,9 @@ namespace JobPortal.Repositories
         {
             List<JobModel> interviews = (from i in dbContext.Interviews
                                          join c in dbContext.Companies on i.AppliedJob.Job.Company.Id equals c.Id
-                                         where i.AppliedJob.User.Id == userid && i.InterViewDate.Date >= DateTime.Now.Date
+                                        
+                                         where !i.AppliedJob.Job.DeleteStatus && !c.DeleteStatus &&
+                                         i.AppliedJob.User.Id == userid && i.InterViewDate.Date >= DateTime.Now.Date
                                          select new JobModel
                                          {
                                              JobId = i.AppliedJob.Job.Id,
@@ -124,38 +120,60 @@ namespace JobPortal.Repositories
 
         public async Task<List<JobModel>> GetJobsByLocation(string location, string userid)
         {
-            List<JobModel> Location = (from l in dbContext.Location
-                                       select new JobModel
-                                       {
-                                           CompanyId = l.Id,
-                                           CompanyName=l.Name,
-                                           JobId = l.Id,
-                                       }
-                                       ).ToList();
-            return Location;
+            List<JobModel> jobModels = await GetJobsByYourSkills(userid);
+            List<JobModel> filteredJobs = jobModels
+            .Where(job => job.Locations.Contains(location))
+            .ToList();
+            return filteredJobs;
         }
 
         public async Task<List<JobModel>> GetJobsByYourSkills(string userid)
         {
             List<string> studentSkills = (from sk in dbContext.StudentSkills where sk.user.Id == userid select sk.skill.Name).ToList();
 
-            List<JobModel> jobModels = (
-                                             from jk in dbContext.JobSkills
-                                             where studentSkills.Contains(jk.Skill.Name)
-                                             group jk by jk.job into jobSkillGroup
-                                             where jobSkillGroup.Count() >= 2
-                                             select new JobModel
-                                             {
-                                                 JobId = jobSkillGroup.Key.Id,
-                                                 Title = jobSkillGroup.Key.Title,
-                                                 Description = jobSkillGroup.Key.Description,
-                                                 CompanyId = jobSkillGroup.Key.Company.Id,
-                                                 CompanyName = jobSkillGroup.Key.Company.Name,
-                                                 Salary = jobSkillGroup.Key.Salary,
-                                                 RequiredSkills = jobSkillGroup.Select(js => js.Skill.Name).ToList()
-                                             }
-                                         ).ToList();
+             List<JobModel> jobModels = (
+                            from jk in dbContext.JobSkills
+                            where studentSkills.Contains(jk.Skill.Name)
+                            join jobApplication in dbContext.AppliedJobs on jk.job.Id equals jobApplication.Job.Id into applications
+                            where applications.All(ja => ja.User.Id != userid) 
+                            && !jk.job.DeleteStatus && !jk.job.Company.DeleteStatus
+                            group jk by jk.job into jobSkillGroup
+                            where jobSkillGroup.Count() >= 1
+                            select new JobModel
+                            {
+                                JobId = jobSkillGroup.Key.Id,
+                                Title = jobSkillGroup.Key.Title,
+                                Description = jobSkillGroup.Key.Description,
+                                CompanyId = jobSkillGroup.Key.Company.Id,
+                                CompanyName = jobSkillGroup.Key.Company.Name,
+                                Salary = jobSkillGroup.Key.Salary,
+                                RequiredSkills = jobSkillGroup.Select(js => js.Skill.Name).ToList(),
+                                Locations=(from cl in dbContext.CompanyLocations where cl.Company.Id== jobSkillGroup.Key.Company.Id select cl.Location.Name).ToList(),
+                            }
+                        ).ToList();
+    
             return jobModels;
+        }
+
+        public async Task<int> InsertSkill(string skillName, string userId)
+        {
+            Skills skill=await skillRespository.GetSkill(skillName);
+            if (skill == null)
+                skill = await skillRespository.InsertSkill(skillName.ToLower());
+            ApplicationUser user=await dbContext.Users.FirstOrDefaultAsync(x=>x.Id==userId);
+            StudentSkills studentSkills=dbContext.StudentSkills.FirstOrDefault(x=>x.skill.Name==skillName.ToLower());
+            if(studentSkills == null)
+            {
+                studentSkills = new StudentSkills()
+                {
+                    user = user,
+                    skill = skill
+                };
+                dbContext.StudentSkills.Add(studentSkills);
+                dbContext.SaveChanges();
+                return 1;
+            }
+            return -1;
         }
 
         public async Task<ApplicationUser> InsertStudentDetails(StudentModel studentModel)

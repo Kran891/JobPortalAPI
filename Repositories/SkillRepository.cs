@@ -31,10 +31,7 @@ namespace JobPortal.Repositories
 
         
 
-        public Task<Skills> InsertSkill(string skillname)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         
 
@@ -47,8 +44,16 @@ namespace JobPortal.Repositories
             return skillNames;
         }
 
-
-
+        public async Task<Skills> InsertSkill(string skillname)
+        {
+            Skills skill = new Skills()
+            {
+              Name = skillname
+            };
+            dbcontext.Skills.Add(skill);
+            dbcontext.SaveChanges();
+            return skill;
+        }
     }
 
     

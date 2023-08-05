@@ -25,7 +25,7 @@ builder.Services.AddTransient<ILocationRepository, LocationRepository>();
 builder.Services.AddTransient<ISkillRepository, SkillRepository>();
 builder.Services.AddTransient<IStudentRepository, StudentRepository>();
 builder.Services.AddTransient<IAdminRepository, AdminRepository>();
-
+builder.Services.AddTransient<INotificationRepository, NotificationRepository>();
 // Identity Configuration
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()

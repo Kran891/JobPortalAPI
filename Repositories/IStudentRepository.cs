@@ -12,5 +12,6 @@ namespace JobPortal.Repositories
         Task<List<JobModel>> GetAppliedJobs(string userid);
         Task<List<JobModel>> GetInterviewsScheduled(string userid);
         Task<int> ApplyJob(int  jobId,string userId);
+        Task<int> InsertSkill(string skillName,string userId);
     }
 }

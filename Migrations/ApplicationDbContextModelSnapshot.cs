@@ -313,6 +313,12 @@ namespace JobPortal.Migrations
                     b.Property<DateTime>("ReceivedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("StatusMode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 

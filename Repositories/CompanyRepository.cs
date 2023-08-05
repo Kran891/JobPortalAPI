@@ -10,11 +10,13 @@ namespace JobPortal.Repositories
         private readonly ApplicationDbContext dbContext;
         private readonly ISkillRepository skillRespository;
         private readonly ILocationRepository locationRepository;
+        private readonly INotificationRepository notificationRepository;
 
-        public CompanyRepository(ApplicationDbContext dbContext, ISkillRepository skillRespository,ILocationRepository locationRepository) {
+        public CompanyRepository(ApplicationDbContext dbContext,INotificationRepository notificationRepository, ISkillRepository skillRespository,ILocationRepository locationRepository) {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
             this.locationRepository = locationRepository;
+            this.notificationRepository = notificationRepository;
         }
         public async Task<int> AddJob(JobModel jobModel)
         {
@@ -44,9 +46,13 @@ namespace JobPortal.Repositories
             return jobs.Id;
         }
 
-        public Task<int> DeleteJob(int jobId)
+        public async Task<int> DeleteJob(int jobId)
         {
-            throw new NotImplementedException();
+            Jobs job=dbContext.Jobs.FirstOrDefault(x=>x.Id==jobId);
+            job.DeleteStatus = true;
+            dbContext.Jobs.Update(job);
+            dbContext.SaveChanges();
+           return job.Id;
         }
 
         public async Task<List<JobModel>> GetAllJobsByCompanyId(int companyId)
@@ -54,7 +60,7 @@ namespace JobPortal.Repositories
             List<JobModel> jobs = await (from c in dbContext.Companies
                                          join j in dbContext.Jobs on c.Id equals j.Company.Id
                                          join js in dbContext.JobSkills on j.Id equals js.job.Id
-
+                                         where !j.DeleteStatus
                                          select new JobModel
                                          {
                                              CompanyId = c.Id,
@@ -106,6 +112,7 @@ namespace JobPortal.Repositories
         public async Task<List<StudentModel>> GetStudentsAppliedForJob(int jobId)
         {
             List<StudentModel> appliedJobs=(from Aj in dbContext.AppliedJobs where Aj.Job.Id ==jobId 
+                                            && !Aj.User.DeleteStatus
                                             select new StudentModel
                                             {
                                                 StudentId=Aj.User.Id,
@@ -127,6 +134,8 @@ namespace JobPortal.Repositories
                                                 join sk in dbContext.StudentSkills on jk.Skill.Id equals sk.skill.Id
                                                 group sk by sk.user into studentSkillGroup
                                                 where studentSkillGroup.Count() > 2
+                                                && !studentSkillGroup.Key.DeleteStatus
+                                                && !dbContext.AppliedJobs.Any(ja => ja.User.Id == studentSkillGroup.Key.Id && ja.Job.Id == jobId)
                                                 select new StudentModel
                                                 {
                                                     FullName=studentSkillGroup.Key.FullName,
@@ -144,6 +153,7 @@ namespace JobPortal.Repositories
             company1.Owner = user;
             company1.Status = false;
             dbContext.Companies.Add(company1);
+            await CreateNotification(user, company1);
             List<CompanyLocation> companyLocations = new List<CompanyLocation>();
             PreferredLocation preferredLocation;
             foreach (string place in company.CompanyLocations)
@@ -161,6 +171,40 @@ namespace JobPortal.Repositories
             if (company1 == null)
                 return -1;
             return company1.Id;
+        }
+
+        public async Task<int> ScheduleInterview(InterViewModel interViewModel)
+        {
+            var  applied=(from ap in dbContext.AppliedJobs where ap.Id==interViewModel.AppliedId
+                          select new
+                          {
+                              appliedJob=ap,
+                              Title=ap.Job.Title,
+                              userId=ap.User.Id
+                          }).FirstOrDefault();
+            InterViewMode interViewMode;
+            Interview interview = new Interview()
+            {
+                InterViewDate = interViewModel.InterViewDate,
+                AppliedJob = applied.appliedJob
+            };
+            Enum.TryParse<InterViewMode>(interViewModel.InterViewMode, true,out interViewMode);
+            interview.InterViewMode = interViewMode;
+          await  dbContext.Interviews.AddAsync(interview);
+          await dbContext.SaveChangesAsync();
+          string msg = $"Dear Applicant for the job role {applied.Title} you applied an InterView is Scheduled.You Can Check About in your Profile";
+            notificationRepository.CreateNotification(msg, applied.userId);
+          return interview.Id;
+        }
+
+        private async Task CreateNotification(ApplicationUser user,Company company)
+        {
+            string msg = $"MrorMs {user.FullName} have Registered their {company.Name} Company  to our Website Please Verify the Company in Unverified Section";
+            string adminId=await (from ur in dbContext.UserRoles 
+                                   join r in dbContext.Roles on ur.RoleId equals r.Id
+                                   where r.Name=="admin" select ur.UserId
+                                   ).FirstOrDefaultAsync();
+            notificationRepository.CreateNotification(adminId, msg);
         }
     }
 }

@@ -46,7 +46,8 @@ namespace JobPortal.Repositories
         public async Task<List<CompanyModel>> GetCompanies()
         {
             List<CompanyModel> companyModels = (from c in dbContext.Companies
-                                                where c.Status == true
+                                                where c.Status 
+                                                && !c.DeleteStatus
                                                 select new CompanyModel
                                                 {
 
@@ -73,6 +74,7 @@ namespace JobPortal.Repositories
             List<JobModel> jobsPostedToday = await(
                 from job in dbContext.Jobs
                 where job.PostedDate.Date == today && !job.DeleteStatus
+                && !job.DeleteStatus && !job.Company.DeleteStatus
                 select new JobModel
                 {
                     JobId=job.Id,
