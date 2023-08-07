@@ -14,7 +14,7 @@ namespace JobPortal.Controllers
             this.userRepository = userRepository;
         }
         [HttpPost]
-        public async Task<IActionResult> InsertUser(UserModel userModel)
+        public async Task<IActionResult> InsertUser([FromBody] UserModel userModel)
         {
             try
             {
