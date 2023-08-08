@@ -13,14 +13,16 @@ namespace JobPortal.Repositories
         private readonly ICompanyRepository companyRepository;
         private readonly ILocationRepository locationRepository;
         private readonly INotificationRepository notificationRepository;
+        private readonly string uploadsFolder;
 
-        public StudentRepository(ApplicationDbContext dbContext,INotificationRepository notificationRepository, ISkillRepository skillRespository, ICompanyRepository companyRepository, ILocationRepository locationRepository)
+        public StudentRepository(IWebHostEnvironment webHostEnvironment, ApplicationDbContext dbContext,INotificationRepository notificationRepository, ISkillRepository skillRespository, ICompanyRepository companyRepository, ILocationRepository locationRepository)
         {
             this.dbContext = dbContext;
             this.skillRespository = skillRespository;
             this.companyRepository = companyRepository;
             this.locationRepository = locationRepository;
             this.notificationRepository = notificationRepository;
+            this.uploadsFolder = Path.Combine(webHostEnvironment.ContentRootPath, "uploads");
         }
 
         public async Task<int> ApplyJob(int jobId, string userId)
@@ -117,7 +119,19 @@ namespace JobPortal.Repositories
             return interviews;
 
         }
-
+        private string UploadFile(IFormFile file)
+        {
+            if(file == null || file.Length==0) {
+                return "";
+            }
+            var fileName=Guid.NewGuid()+Path.GetExtension(file.FileName);
+            var filepath = Path.Combine(uploadsFolder, fileName);
+            using(var stream=new FileStream(filepath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+            return fileName;
+        }
         public async Task<List<JobModel>> GetJobsByLocation(string location, string userid)
         {
             List<JobModel> jobModels = await GetJobsByYourSkills(userid);
@@ -179,7 +193,7 @@ namespace JobPortal.Repositories
         public async Task<ApplicationUser> InsertStudentDetails(StudentModel studentModel)
         {
             ApplicationUser user = (from u in dbContext.Users where u.Id == studentModel.StudentId select u).FirstOrDefault<ApplicationUser>();
-            user.Resume = studentModel.Resume;
+            user.Resume = UploadFile(studentModel.ResumeFile);
             dbContext.Users.Add(user);
             // List<Skills> skills = new List<Skills>();
             List<StudentSkills> studentSkills = new List<StudentSkills>();

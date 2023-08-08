@@ -3,6 +3,7 @@ using JobPortal.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -17,7 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("mysql"));
 });
-
+var webHostEnvironment = builder.Environment;
 // Repositories
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ICompanyRepository, CompanyRepository>();
@@ -88,7 +89,10 @@ app.UseCors("AllowAnyOrigin"); // Apply CORS policy
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(webHostEnvironment.ContentRootPath, "uploads"))
+}); 
 app.MapControllers();
 
 app.Run();
