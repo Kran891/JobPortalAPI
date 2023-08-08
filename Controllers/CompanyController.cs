@@ -19,7 +19,7 @@ namespace JobPortal.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> AddJob(JobModel jobModel)
+        public async Task<IActionResult> AddJob([FromBody]JobModel jobModel)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace JobPortal.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> InsertCompany(CompanyModel company)
+        public async Task<IActionResult> InsertCompany([FromBody] CompanyModel company)
         {
             try
             {

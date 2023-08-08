@@ -30,7 +30,7 @@ namespace JobPortal.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> LoginUser(LoginModel loginModel)
+        public async Task<IActionResult> LoginUser([FromBody]LoginModel loginModel)
             {
             Object tk= await userRepository.LoginUser(loginModel);
             if(tk != null)
