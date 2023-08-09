@@ -7,6 +7,7 @@
         public string? OwnerId { get; set; }
         public int CompanyId { get; set; }
         public string? OwnerName { get; set; }
+        public string? Location { get; set; }
        public List<string>? CompanyLocations { get; set; }
     }
 }

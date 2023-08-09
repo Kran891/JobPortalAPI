@@ -216,6 +216,9 @@ namespace JobPortal.Migrations
                     b.Property<DateTime>("InterViewDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("InterViewLocation")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("InterViewMode")
                         .HasColumnType("int");
 

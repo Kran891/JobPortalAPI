@@ -9,14 +9,15 @@ namespace JobPortal.Repositories
 {
     public class SkillRepository : ISkillRepository
     {
-        private readonly ApplicationDbContext dbcontext;
-        public SkillRepository(ApplicationDbContext dbContext) {
-            this.dbcontext = dbcontext;
+        private readonly ApplicationDbContext dbContext;
+        public SkillRepository(ApplicationDbContext dbContext) 
+        {
+            this.dbContext = dbContext;
         }
 
         public async Task<List<string>> GetAllSkills(string userid)
         {
-            List<string> skillnames= ( from sk in dbcontext.StudentSkills
+            List<string> skillnames= ( from sk in dbContext.StudentSkills
                                        where sk.user.Id == userid select sk.skill.Name
 
                                        ).ToList();
@@ -25,7 +26,7 @@ namespace JobPortal.Repositories
 
         public async Task<Skills> GetSkill(string skillname)
         {
-          Skills skill=(from sk in dbcontext.Skills where sk.Name == skillname select sk).FirstOrDefault<Skills>();
+          Skills skill=(from sk in dbContext.Skills where sk.Name == skillname select sk).FirstOrDefault<Skills>();
             return skill;
         }
 
@@ -38,7 +39,7 @@ namespace JobPortal.Repositories
         
         public async Task<List<string>> GetAllSkillsAsync()
         {
-            List<string> skillNames = await dbcontext.Skills
+            List<string> skillNames = await dbContext.Skills
                                                  .Select(skill => skill.Name)
                                                  .ToListAsync();
             return skillNames;
@@ -50,8 +51,8 @@ namespace JobPortal.Repositories
             {
               Name = skillname
             };
-            dbcontext.Skills.Add(skill);
-            dbcontext.SaveChanges();
+            dbContext.Skills.Add(skill);
+            dbContext.SaveChanges();
             return skill;
         }
     }

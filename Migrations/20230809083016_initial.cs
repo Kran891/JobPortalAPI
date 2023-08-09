@@ -455,6 +455,7 @@ namespace JobPortal.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InterViewDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     InterViewMode = table.Column<int>(type: "int", nullable: false),
+                    InterViewLocation = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AppliedJobId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

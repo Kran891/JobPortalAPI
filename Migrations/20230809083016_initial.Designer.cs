@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobPortal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230809073918_initial")]
+    [Migration("20230809083016_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -218,6 +218,9 @@ namespace JobPortal.Migrations
 
                     b.Property<DateTime>("InterViewDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("InterViewLocation")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("InterViewMode")
                         .HasColumnType("int");

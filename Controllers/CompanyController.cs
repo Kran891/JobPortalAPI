@@ -2,12 +2,14 @@
 using JobPortal.Models;
 using JobPortal.Repositories;
 using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobPortal.Controllers
 {
+    
     [Route("[controller]/[action]")]
-    [Authorize(Policy ="Company")]
+    // [Authorize(Policy ="Company")]
     public class CompanyController : Controller
     {
         private readonly ICompanyRepository companyRepository;
@@ -99,11 +101,11 @@ namespace JobPortal.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> InsertCompany([FromBody] CompanyModel company)
+        public async Task<IActionResult> InsertCompany(CompanyModel companymodel)
         {
             try
             {
-                return Ok(await companyRepository.InsertCompany(company));
+                return Ok(await companyRepository.InsertCompany(companymodel));
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);
