@@ -52,7 +52,9 @@ namespace JobPortal.Repositories
                     await roleManager.CreateAsync(new IdentityRole(userModel.Role.Trim().ToLower()));
                 }
                 await userManager.AddToRoleAsync(user, userModel.Role);
-                return new  {token= JWTTokenGenerator(user, userModel.Role.Trim().ToLower()),userId=user.Id};
+                return new  {token= JWTTokenGenerator(user, userModel.Role.Trim().ToLower()),userId=user.Id,
+                role=userModel.Role
+                };
             }
             else return null;
         }
@@ -72,7 +74,7 @@ namespace JobPortal.Repositories
             {
                 var roles = await userManager.GetRolesAsync(user);
 
-                return new  {token= JWTTokenGenerator(user, roles.FirstOrDefault()),userId=user.Id};
+                return new  {token= JWTTokenGenerator(user, roles.FirstOrDefault()),role=roles.FirstOrDefault(),userId=user.Id};
             }
 
         }

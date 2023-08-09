@@ -191,6 +191,10 @@ namespace JobPortal.Repositories
             };
             Enum.TryParse<InterViewMode>(interViewModel.InterViewMode, true,out interViewMode);
             interview.InterViewMode = interViewMode;
+            if(interViewModel.InterViewLocation != null)
+            {
+                interview.InterViewLocation = interViewModel.InterViewLocation;
+            }
           await  dbContext.Interviews.AddAsync(interview);
           await dbContext.SaveChangesAsync();
           string msg = $"Dear Applicant for the job role {applied.Title} you applied an InterView is Scheduled.You Can Check About in your Profile";

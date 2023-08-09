@@ -194,7 +194,8 @@ namespace JobPortal.Repositories
         {
             ApplicationUser user = (from u in dbContext.Users where u.Id == studentModel.StudentId select u).FirstOrDefault<ApplicationUser>();
             user.Resume = UploadFile(studentModel.ResumeFile);
-            dbContext.Users.Add(user);
+            user.Address = studentModel.Address;
+            dbContext.Users.Update(user);
             // List<Skills> skills = new List<Skills>();
             List<StudentSkills> studentSkills = new List<StudentSkills>();
             StudentSkills studentSkill;

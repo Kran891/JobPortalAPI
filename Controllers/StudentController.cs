@@ -7,7 +7,7 @@ namespace JobPortal.Controllers
 {
 
     [Route("[controller]/[action]")]
-    [Authorize(Policy ="Student")]
+   // [Authorize(Policy ="Student")]
     public class StudentController : Controller
     {
         private readonly IStudentRepository studentRepository;

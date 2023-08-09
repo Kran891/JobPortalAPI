@@ -8,5 +8,6 @@
         public DateTime InterViewDate { get; set; }
         public string? JobName { get; set; }
         public string? CompanyName { get; set; }
+        public string? InterViewLocation { get; set; }
     }
 }
