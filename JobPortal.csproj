@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="uploads\" />
+    <Folder Include="uploads\NewFolder\" />
   </ItemGroup>
 
 </Project>

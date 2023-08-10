@@ -107,7 +107,7 @@ namespace JobPortal.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> InsertCompany(CompanyModel companymodel)
+        public async Task<IActionResult> InsertCompany([FromBody] CompanyModel companymodel)
         {
             try
             {
