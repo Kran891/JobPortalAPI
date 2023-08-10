@@ -59,7 +59,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await adminRepository.GetJobPostedToday());
+                var data = await adminRepository.GetJobPostedToday();
+                return Ok(new { data = data });
             }
             catch (Exception ex)
             {
@@ -75,7 +76,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await adminRepository.GetCompanies());
+                var data = await adminRepository.GetCompanies();
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {

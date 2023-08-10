@@ -25,7 +25,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await companyRepository.AddJob(jobModel));
+                var data = await companyRepository.AddJob(jobModel);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -38,7 +39,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await companyRepository.GetAllJobsByCompanyId(companyId));
+                var data = await companyRepository.GetAllJobsByCompanyId(companyId);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -51,7 +53,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await companyRepository.GetAllJobsByCompanyLocation(companyId, location));
+                var data = await companyRepository.GetAllJobsByCompanyLocation(companyId, location);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -65,7 +68,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await companyRepository.GetStudentsAppliedForJob(jobId));
+                var data = await companyRepository.GetStudentsAppliedForJob(jobId);
+                return Ok(new { data = data });
             }
             catch (Exception ex)
             {
@@ -79,7 +83,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await companyRepository.GetSuggestionsForRole(jobId));
+                var data = await companyRepository.GetSuggestionsForRole(jobId);
+                return Ok(new { data = data });
             }
             catch (Exception ex)
             {
@@ -93,7 +98,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await companyRepository.DeleteJob(jobId));
+                var data = await companyRepository.DeleteJob(jobId);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -105,7 +111,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await companyRepository.InsertCompany(companymodel));
+                var data = await companyRepository.InsertCompany(companymodel);
+                return Ok(new {data = data});
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);

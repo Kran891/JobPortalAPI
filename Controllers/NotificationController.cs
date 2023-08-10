@@ -20,7 +20,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await notificationRepository.GetAllNotifications(userId));
+                var data = await notificationRepository.GetAllNotifications(userId);
+                return Ok(new {data = data});
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -32,7 +33,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await notificationRepository.DeleteNotification(id));
+                var data =await notificationRepository.DeleteNotification(id);
+                return Ok(new {data = data});
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);

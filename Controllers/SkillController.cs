@@ -17,7 +17,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await skillRepository.InsertSkill(skillname));
+                var data = await skillRepository.GetSkill(skillname);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -30,7 +31,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await skillRepository.GetSkill(skillname));
+                var data = await skillRepository.GetSkill(skillname);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {

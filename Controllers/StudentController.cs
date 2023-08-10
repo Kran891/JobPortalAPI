@@ -20,7 +20,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await studentRepository.InsertStudentDetails(studentModel));
+                var data = await studentRepository.InsertStudentDetails(studentModel);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -33,7 +34,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await studentRepository.GetJobsByLocation(location, userid));
+                var data = await studentRepository.GetJobsByLocation(location, userid);
+                return Ok(new {data=data});
             }
             catch (Exception ex)
             {
@@ -46,7 +48,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await studentRepository.GetAllJobs(userid));
+                var data =await studentRepository.GetAllJobs(userid);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -60,7 +63,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await studentRepository.GetJobsByYourSkills(userid));
+                var data = await studentRepository.GetJobsByYourSkills(userid);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -74,7 +78,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await studentRepository.GetAppliedJobs(userid));
+                var data = await studentRepository.GetAppliedJobs(userid);
+                return Ok(new {data = data});
             }
             catch (Exception ex)
             {
@@ -88,7 +93,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await studentRepository.GetInterviewsScheduled(userid));
+                var data = await studentRepository.GetInterviewsScheduled(userid);
+                return Ok(new {data=data});
             }
             catch (Exception ex)
             {
@@ -103,7 +109,8 @@ namespace JobPortal.Controllers
         {
             try
             {
-                return Ok(await studentRepository.InsertSkill(skillName, userId));
+                var data = await studentRepository.InsertSkill(skillName, userId);
+                return Ok(new {data = data});
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);
