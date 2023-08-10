@@ -61,9 +61,9 @@ namespace JobPortal.Repositories
 
         public async Task<object> LoginUser(LoginModel loginModel)
         {
-            var user = await userManager.FindByEmailAsync(loginModel.Email.ToUpper());
+            var user = await userManager.FindByEmailAsync(loginModel.LEmail.ToUpper());
             
-            var result = await userManager.CheckPasswordAsync(user,loginModel.Password);
+            var result = await userManager.CheckPasswordAsync(user,loginModel.LPassword);
             
             if (user == null || !result)
             {

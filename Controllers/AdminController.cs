@@ -8,7 +8,7 @@ using System.ComponentModel.Design;
 namespace JobPortal.Controllers
 {
     [Route("[controller]/[action]")]
-    [Authorize(Policy = "Admin")]
+   // [Authorize(Policy = "Admin")]
     public class AdminController : Controller
     {
         private readonly IAdminRepository adminRepository;
@@ -18,12 +18,13 @@ namespace JobPortal.Controllers
         }
         [HttpGet]
         //[HttpGet]
-        [Authorize(Policy = "Admin")]
+       // [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetAllUnverifiedCompanies()
         {
             try
             {
-                return Ok(await adminRepository.GetAllUnverifiedCompanies());
+                var data = await adminRepository.GetAllUnverifiedCompanies();
+                return Ok(new { data = data});
             }
             catch (Exception ex)
             {
@@ -41,7 +42,8 @@ namespace JobPortal.Controllers
 
             try
             {
-                return Ok(await adminRepository.VerifyCompany(CompanyId));
+                var data = await adminRepository.VerifyCompany(CompanyId);
+                return Ok(new {data=data});
             }
             catch (Exception ex)
             {
