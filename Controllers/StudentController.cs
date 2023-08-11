@@ -16,7 +16,7 @@ namespace JobPortal.Controllers
             this.studentRepository = studentRepository;
         }
         [HttpPost]
-        public async Task<IActionResult> InsertStudentDetails([FromBody] StudentModel studentModel)
+        public async Task<IActionResult> InsertStudentDetails( StudentModel studentModel)
         {
             try
             {

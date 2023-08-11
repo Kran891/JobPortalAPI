@@ -19,14 +19,15 @@ namespace JobPortal.Repositories
 
         private readonly IConfiguration configuration;
         private readonly RoleManager<IdentityRole> roleManager;
-        
+        private readonly ApplicationDbContext dbContext;
 
         public UserRepository(RoleManager<IdentityRole> roleManager, UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,IConfiguration configuration){
+            SignInManager<ApplicationUser> signInManager,IConfiguration configuration,ApplicationDbContext dbContext){
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.configuration = configuration;
             this.roleManager = roleManager;
+            this.dbContext = dbContext;
            
         }
         public async Task<object> InsertUser(UserModel userModel)
@@ -70,11 +71,16 @@ namespace JobPortal.Repositories
                
                 return null;
             }
+            
             else
             {
+                int companyId = 0;
                 var roles = await userManager.GetRolesAsync(user);
+                //if(roles.FirstOrDefault()=="Company")
+                companyId = dbContext.Companies.Where(x=>x.Owner.Id==user.Id && x.Status).Select(x=>x.Id).FirstOrDefault();
+                   
 
-                return new  {token= JWTTokenGenerator(user, roles.FirstOrDefault()),role=roles.FirstOrDefault(),userId=user.Id};
+                return new  {token= JWTTokenGenerator(user, roles.FirstOrDefault()),role=roles.FirstOrDefault(),userId=user.Id, companyId = companyId};
             }
 
         }

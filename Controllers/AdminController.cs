@@ -8,7 +8,7 @@ using System.ComponentModel.Design;
 namespace JobPortal.Controllers
 {
     [Route("[controller]/[action]")]
-   // [Authorize(Policy = "Admin")]
+    [Authorize(Policy = "Admin")]
     public class AdminController : Controller
     {
         private readonly IAdminRepository adminRepository;
