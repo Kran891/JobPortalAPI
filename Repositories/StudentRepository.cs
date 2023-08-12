@@ -144,26 +144,22 @@ namespace JobPortal.Repositories
         public async Task<List<JobModel>> GetJobsByYourSkills(string userid)
         {
             List<string> studentSkills = (from sk in dbContext.StudentSkills where sk.user.Id == userid select sk.skill.Name).ToList();
-
+            List<int> appliedJobIds = (from aj in dbContext.AppliedJobs where aj.User.Id == userid select aj.Job.Id).ToList();
              List<JobModel> jobModels = (
-                            from jk in dbContext.JobSkills
-                            where studentSkills.Contains(jk.Skill.Name)
-                            join jobApplication in dbContext.AppliedJobs on jk.job.Id equals jobApplication.Job.Id into applications
-                            where applications.All(ja => ja.User.Id != userid) 
-                            && !jk.job.DeleteStatus && !jk.job.Company.DeleteStatus
-                            group jk by jk.job into jobSkillGroup
-                            where jobSkillGroup.Count() >= 1
+                            from j in dbContext.Jobs 
+                            where !appliedJobIds.Contains(j.Id)
+                            && !j.DeleteStatus && !j.Company.DeleteStatus
                             select new JobModel
                             {
-                                JobId = jobSkillGroup.Key.Id,
-                                Title = jobSkillGroup.Key.Title,
-                                Description = jobSkillGroup.Key.Description,
-                                CompanyId = jobSkillGroup.Key.Company.Id,
-                                CompanyName = jobSkillGroup.Key.Company.Name,
-                                Salary = jobSkillGroup.Key.Salary,
-                                RequiredSkills = jobSkillGroup.Select(js => js.Skill.Name).ToList(),
-                                NoOfApplicants=(from ap in dbContext.AppliedJobs where ap.Job.Id==jobSkillGroup.Key.Id select ap.Id).ToList().Count(),
-                                Locations=(from cl in dbContext.CompanyLocations where cl.Company.Id== jobSkillGroup.Key.Company.Id select cl.Location.Name).ToList(),
+                                JobId = j.Id,
+                                Title = j.Title,
+                                Description = j.Description,
+                                CompanyId = j.Company.Id,
+                                CompanyName = j.Company.Name,
+                                Salary = j.Salary,
+                                RequiredSkills = (from js in dbContext.JobSkills where js.job.Id==j.Id select js.Skill.Name).ToList(),
+                                NoOfApplicants=(from ap in dbContext.AppliedJobs where ap.Job.Id==j.Id select ap.Id).ToList().Count(),
+                                Locations=(from cl in dbContext.CompanyLocations where cl.Company.Id== j.Company.Id select cl.Location.Name).ToList(),
                             }
                         ).ToList();
     
