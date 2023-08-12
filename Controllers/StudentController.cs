@@ -11,9 +11,11 @@ namespace JobPortal.Controllers
     public class StudentController : Controller
     {
         private readonly IStudentRepository studentRepository;
-        public StudentController(IStudentRepository studentRepository)
+        private readonly string uploadsFolder;
+        public StudentController(IWebHostEnvironment webHostEnvironment,IStudentRepository studentRepository)
         {
             this.studentRepository = studentRepository;
+            this.uploadsFolder = Path.Combine(webHostEnvironment.ContentRootPath, "uploads");
         }
         [HttpPost]
         public async Task<IActionResult> InsertStudentDetails( StudentModel studentModel)
@@ -115,6 +117,20 @@ namespace JobPortal.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+        [HttpGet]
+        [Route("{fileName}")]
+        public IActionResult Download(string fileName)
+        {
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+                return File(fileStream, "application/octet-stream", fileName);
+            }
+
+            return NotFound(); // File not found
         }
     }
 }

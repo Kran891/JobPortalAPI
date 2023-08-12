@@ -1,0 +1,627 @@
+login.js:
+import React from 'react';
+import './style.css';
+import SignUp from './SignUp';
+
+class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showSignUp: false,
+    };
+  }
+
+  handleLinkClick = () => {
+    this.setState({ showSignUp: true });
+  };
+
+  render() {
+    const { showSignUp } = this.state;
+
+    return (
+      <form action="#" className="login">
+        <div className="field">
+          <input type="text" placeholder="Email Address" required />
+        </div>
+        <div className="field">
+          <input type="password" placeholder="Password" required />
+        </div>
+        <div className="field btn">
+          <div className="btn-layer"></div>
+          <input type="submit" value="Login" />
+        </div>
+        <div className="signup-link">
+          New User <a href="#signup" onClick={this.handleLinkClick}>Signup now</a>
+          {showSignUp ? <SignUp /> : null}
+        </div>
+      </form>
+    );
+  }
+}
+export default Login;
+======================================================================================================
+signup.js
+
+import React from 'react';
+import './style.css';
+
+class SignUP extends React.Component {
+  render() {
+    return (
+      <form action="#" className="signup-form">
+        <div className="field">
+          <input type="email" placeholder="Email Address" required />
+        </div>
+        <div className="field">
+          <input type="tel" placeholder="Contact Number" required />
+        </div>
+        <div className="field">
+          <select className="custom-dropdown">
+            <option value="" disabled selected className="options-list">
+              Select UserType
+            </option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </select>
+        </div>
+        <div className="field">
+          <input type="password" placeholder="Password" required />
+        </div>
+        <div className="field">
+          <input type="password" placeholder="Confirm password" required />
+        </div>
+        <div className="field btn">
+          <div className="btn-layer"></div>
+          <input type="submit" value="Signup" />
+        </div>
+      </form>
+    );
+  }
+}
+
+export default SignUP;
+==================================================================================
+loginform.js
+
+import React from 'react';
+import Login from './Login'; // Import the Login component
+import Signup from './SignUp';
+import './style.css';
+
+class LoginForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showLogin: true,
+    };
+  }
+
+  handleSliderChange = (event) => {
+    this.setState({ showLogin: event.target.id === 'login' });
+  };
+
+  handleSignupLinkClick = () => {
+    this.setState({ showLogin: false });
+  };
+
+  render() {
+    const { showLogin } = this.state;
+
+    return (
+      <div className="wrapper">
+        <div className="title-text">
+          <div className={`title ${showLogin ? 'login' : 'signup'}`}>
+            {showLogin ? 'Login Form' : 'Signup Form'}
+          </div>
+        </div>
+        <div className="form-container">
+          <div className="slide-controls">
+            <input
+              type="radio"
+              name="slide"
+              id="login"
+              checked={showLogin}
+              onChange={this.handleSliderChange}
+            />
+            <input
+              type="radio"
+              name="slide"
+              id="signup"
+              checked={!showLogin}
+              onChange={this.handleSliderChange}
+            />
+            <label htmlFor="login" className="slide login">
+              Login
+            </label>
+            <label htmlFor="signup" className="slide signup">
+              Signup
+            </label>
+            <div className="slider-tab"></div>
+          </div>
+          <div className="form-inner">
+            {showLogin ? (
+              <form action="#" className="login">
+                {/* The login form fields */}
+                <Login />
+              </form>
+            ) : (
+              <form action="#" className="signup">
+                {/* The signup form fields */}
+                <Signup />
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default LoginForm;
+=====================================================================
+style.css
+
+@import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+
+*{
+
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+
+  font-family: 'Poppins', sans-serif;
+
+}
+
+html,body{
+
+  display: grid;
+
+  height: 100%;
+
+  width: 100%;
+
+  place-items: center;
+
+  background: -webkit-linear-gradient(left, #bfc5d5, #2b84c997);
+
+}
+
+::selection{
+
+  background: #2b84c997;
+
+  color: #fff;
+
+}
+
+.wrapper{
+
+  overflow: hidden;
+
+  max-width: 390px;
+
+  background: #fff;
+
+  padding: 30px;
+
+  border-radius: 5px;
+
+  box-shadow: 0px 15px 20px rgba(0,0,0,0.1);
+
+}
+
+.wrapper .title-text{
+
+  display: flex;
+
+  width: 200%;
+
+}
+
+.wrapper .title{
+
+  width: 50%;
+
+  font-size: 35px;
+
+  font-weight: 600;
+
+  text-align: center;
+
+  transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
+
+}
+
+.wrapper .slide-controls{
+
+  position: relative;
+
+  display: flex;
+
+  height: 50px;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  margin: 30px 0 10px 0;
+
+  justify-content: space-between;
+
+  border: 1px solid lightgrey;
+
+  border-radius: 5px;
+
+}
+
+.slide-controls .slide{
+
+  height: 100%;
+
+  width: 100%;
+
+  color: #fff;
+
+  font-size: 18px;
+
+  font-weight: 500;
+
+  text-align: center;
+
+  line-height: 48px;
+
+  cursor: pointer;
+
+  z-index: 1;
+
+  transition: all 0.6s ease;
+
+}
+
+.slide-controls label.signup{
+
+  color: #000;
+
+}
+
+.slide-controls .slider-tab{
+
+  position: absolute;
+
+  height: 100%;
+
+  width: 50%;
+
+  left: 0;
+
+  z-index: 0;
+
+  border-radius: 5px;
+
+  background: -webkit-linear-gradient(left, #bfc5d5, #2b84c997);
+
+  transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
+
+}
+
+input[type="radio"]{
+
+  display: none;
+
+}
+
+#signup:checked ~ .slider-tab{
+
+  left: 50%;
+
+}
+
+#signup:checked ~ label.signup{
+
+  color: #fff;
+
+  cursor: default;
+
+  user-select: none;
+
+}
+
+#signup:checked ~ label.login{
+
+  color: #000;
+
+}
+
+#login:checked ~ label.signup{
+
+  color: #000;
+
+}
+
+#login:checked ~ label.login{
+
+  cursor: default;
+
+  user-select: none;
+
+}
+
+.wrapper .form-container{
+
+  width: 100%;
+
+  overflow: hidden;
+
+}
+
+.form-container .form-inner{
+
+  display: flex;
+
+  width: 200%;
+
+}
+
+.form-container .form-inner form{
+
+  width: 50%;
+
+  transition: all 0.6s cubic-bezier(0.68,-0.55,0.265,1.55);
+
+}
+
+.form-inner form .field{
+
+  height: 50px;
+
+  width: 329px;
+
+  margin-top: 20px;
+
+}
+
+   .form-inner form .field .custom-dropdown {
+    position: relative;
+    padding: 10px;
+    cursor: pointer;
+    height: 100%;
+    width: 329px;
+    outline: none;
+   /* padding-left: 15px; */
+    border-radius: 5px;
+    border: 1px solid lightgrey;
+    border-bottom-width: 2px;
+    font-size: 17px;
+    transition: all 0.3s ease;
+  }
+  .form-inner form .field .custom-dropdown:focus {
+    border-color: #2b84c997;
+    /* box-shadow: inset 0 0 3px #fb6aae; */
+  }
+  .form-inner form .field .custom-dropdown::placeholder {
+    color: #999;
+    transition: all 0.3s ease;
+  }
+  
+  /* Styles for the placeholder text in the focused state (optional) */
+  .form-inner form .field .custom-dropdown:focus::placeholder {
+    color: #b3b3b3;
+  }
+/* Styles for each option in the list */
+.form-inner form .field .custom-dropdown option {
+    padding: 8px 10px;
+    transition: background-color 0.3s ease;
+    opacity: 0.7; /* Reduce the opacity of the text */
+  }
+  
+  /* Hover effect for each option */
+  .form-inner form .field .custom-dropdown option:hover {
+    background-color: #f2f2f2;
+  }
+  
+  
+  
+  
+.form-inner form .field input{
+
+  height: 100%;
+
+  width: 100%;
+
+  outline: none;
+
+  padding-left: 15px;
+
+  border-radius: 5px;
+
+  border: 1px solid lightgrey;
+
+  border-bottom-width: 2px;
+
+  font-size: 17px;
+
+  transition: all 0.3s ease;
+
+}
+
+  
+
+.form-inner form .field input:focus{
+
+  border-color: #2b84c997;
+
+  /* box-shadow: inset 0 0 3px #fb6aae; */
+
+}
+
+.form-inner form .field input::placeholder{
+
+  color: #999;
+
+  transition: all 0.3s ease;
+
+}
+
+form .field input:focus::placeholder{
+
+  color: #b3b3b3;
+
+}
+
+.form-inner form .pass-link{
+
+  margin-top: 5px;
+
+}
+
+.form-inner form .signup-link{
+
+  text-align: center;
+
+  margin-top: 30px;
+
+}
+
+.form-inner form .pass-link a,
+
+.form-inner form .signup-link a{
+
+  color: #2b84c997;
+
+  text-decoration: none;
+
+}
+
+.form-inner form .pass-link a:hover,
+
+.form-inner form .signup-link a:hover{
+
+  text-decoration: underline;
+
+}
+
+form .btn{
+
+  height: 50px;
+
+  width: 100%;
+
+  border-radius: 5px;
+
+  position: relative;
+
+  overflow: hidden;
+
+}
+
+form .btn .btn-layer{
+
+  height: 100%;
+
+  width: 300%;
+
+  position: absolute;
+
+  left: -100%;
+
+  background: -webkit-linear-gradient(right, #bfc5d5, #2b84c997, #bfc5d5, #2b84c997);
+
+  border-radius: 5px;
+
+  transition: all 0.4s ease;;
+
+}
+
+form .btn:hover .btn-layer{
+
+  left: 0;
+
+}
+
+form .btn input[type="submit"]{
+
+  height: 100%;
+
+  width: 100%;
+
+  z-index: 1;
+
+  position: relative;
+
+  background: none;
+
+  border: none;
+
+  color: #fff;
+
+  padding-left: 0;
+
+  border-radius: 5px;
+
+  font-size: 20px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+
+}
+
+/* Common styling for inputs and labels */
+
+.form-inner form .field input,
+
+.form-inner form .field1 label {
+
+    height: 100%;
+
+    width: 100%;
+
+    outline: none;
+
+    padding-left: 15px;
+
+    border-radius: 5px;
+
+    border: 1px solid lightgrey;
+
+    border-bottom-width: 2px;
+
+    font-size: 17px;
+
+    transition: all 0.3s ease;
+
+}
+
+/* Additional styling specific to labels (if needed) */
+
+.form-inner form .field label {
+
+    /* Add any additional styling for labels here if required */
+
+    display: block;
+
+    margin-top: 10px;
+
+    font-weight: bold;
+
+    /* Add any additional styling specific to labels */
+
+}
+==================================================================================
+App.js
+
+
+import './App.css';
+import './components/style.css'
+import LoginForm from './components/LoginForm';
+function App() {
+  return <>
+ <LoginForm />
+  </>
+}
+
+export default App;
+

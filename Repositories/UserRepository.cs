@@ -54,7 +54,7 @@ namespace JobPortal.Repositories
                 }
                 await userManager.AddToRoleAsync(user, userModel.Role);
                 return new  {token= JWTTokenGenerator(user, userModel.Role.Trim().ToLower()),userId=user.Id,
-                role=userModel.Role
+                role=userModel.Role.ToLower()
                 };
             }
             else return null;

@@ -20,7 +20,7 @@ namespace JobPortal.Repositories
         }
         public async Task<int> AddJob(JobModel jobModel)
         {
-           Jobs? job=await(from j in dbContext.Jobs where j.Title.ToLower()==jobModel.Title.ToLower() select j).FirstOrDefaultAsync();
+           Jobs? job=await(from j in dbContext.Jobs where j.Title.ToLower()==jobModel.Title.ToLower() && j.Company.Id==jobModel.CompanyId select j).FirstOrDefaultAsync();
             if (job != null)
             {
                 return -1;
@@ -29,6 +29,7 @@ namespace JobPortal.Repositories
            string obj=JsonConvert.SerializeObject(jobModel);
            Jobs? jobs=JsonConvert.DeserializeObject<Jobs>(obj);
             jobs.Company = company;
+            jobs.PostedDate = DateTime.Now;
            dbContext.Jobs.Add(jobs);
             JobSkills jobSkill;
             List<JobSkills> skills = new List<JobSkills>();

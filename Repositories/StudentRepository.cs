@@ -192,10 +192,12 @@ namespace JobPortal.Repositories
 
         public async Task<ApplicationUser> InsertStudentDetails(StudentModel studentModel)
         {
+            
             ApplicationUser user = (from u in dbContext.Users where u.Id == studentModel.StudentId select u).FirstOrDefault<ApplicationUser>();
             user.Resume = UploadFile(studentModel.ResumeFile);
             user.Address = studentModel.Address;
             dbContext.Users.Update(user);
+            
             // List<Skills> skills = new List<Skills>();
             List<StudentSkills> studentSkills = new List<StudentSkills>();
             StudentSkills studentSkill;

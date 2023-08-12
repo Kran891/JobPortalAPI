@@ -73,7 +73,7 @@ namespace JobPortal.Repositories
 
             List<JobModel> jobsPostedToday = await(
                 from job in dbContext.Jobs
-                where job.PostedDate.Date == today && !job.DeleteStatus
+                where job.PostedDate.Date == today.Date && !job.DeleteStatus
                 && !job.DeleteStatus && !job.Company.DeleteStatus
                 select new JobModel
                 {
