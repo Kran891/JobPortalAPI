@@ -162,6 +162,7 @@ namespace JobPortal.Repositories
                                 CompanyName = jobSkillGroup.Key.Company.Name,
                                 Salary = jobSkillGroup.Key.Salary,
                                 RequiredSkills = jobSkillGroup.Select(js => js.Skill.Name).ToList(),
+                                NoOfApplicants=(from ap in dbContext.AppliedJobs where ap.Job.Id==jobSkillGroup.Key.Id select ap.Id).ToList().Count(),
                                 Locations=(from cl in dbContext.CompanyLocations where cl.Company.Id== jobSkillGroup.Key.Company.Id select cl.Location.Name).ToList(),
                             }
                         ).ToList();
