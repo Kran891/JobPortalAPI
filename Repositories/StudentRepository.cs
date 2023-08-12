@@ -28,7 +28,7 @@ namespace JobPortal.Repositories
         public async Task<int> ApplyJob(int jobId, string userId)
         {
             AppliedJobs appliedJob = (from aj in dbContext.AppliedJobs where aj.User.Id == userId select aj).FirstOrDefault();
-            if (appliedJob != null)
+            if (appliedJob == null)
             {
                 ApplicationUser user = dbContext.Users.FirstOrDefault(x => x.Id == userId);
                 var job = (from j in dbContext.Jobs
@@ -157,9 +157,9 @@ namespace JobPortal.Repositories
                                 CompanyId = j.Company.Id,
                                 CompanyName = j.Company.Name,
                                 Salary = j.Salary,
-                                RequiredSkills = (from js in dbContext.JobSkills where js.job.Id==j.Id select js.Skill.Name).ToList(),
-                                NoOfApplicants=(from ap in dbContext.AppliedJobs where ap.Job.Id==j.Id select ap.Id).ToList().Count(),
-                                Locations=(from cl in dbContext.CompanyLocations where cl.Company.Id== j.Company.Id select cl.Location.Name).ToList(),
+                                RequiredSkills = (from js in dbContext.JobSkills where js.job.Id == j.Id select js.Skill.Name).ToList(),
+                                NoOfApplicants = (from ap in dbContext.AppliedJobs where ap.Job.Id == j.Id select ap.Id).ToList().Count,
+                                Locations = (from cl in dbContext.CompanyLocations where cl.Company.Id == j.Company.Id select cl.Location.Name).ToList(),
                             }
                         ).ToList();
     

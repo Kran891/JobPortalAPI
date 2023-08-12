@@ -132,5 +132,19 @@ namespace JobPortal.Controllers
 
             return NotFound(); // File not found
         }
+        [HttpGet]
+        [Route("{jobId}/{userId}")]
+        public async Task<IActionResult> ApplyJob(int jobId,string userId)
+        {
+            try
+            {
+                var data =await studentRepository.ApplyJob(jobId, userId);
+                return Ok(new {data = data});
+
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }
