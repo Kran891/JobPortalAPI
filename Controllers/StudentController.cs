@@ -120,7 +120,7 @@ namespace JobPortal.Controllers
         }
         [HttpGet]
         [Route("{fileName}")]
-        public IActionResult Download(string fileName)
+        public IActionResult Resume(string fileName)
         {
             var filePath = Path.Combine(uploadsFolder, fileName);
 

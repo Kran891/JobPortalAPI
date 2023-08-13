@@ -111,11 +111,15 @@ namespace JobPortal.Repositories
         }
 
         public async Task<List<StudentModel>> GetStudentsAppliedForJob(int jobId)
-        {
+        { 
+            List<string> interviews=await(from i in dbContext.Interviews where i.AppliedJob.Job.Id==jobId select i.AppliedJob.User.Id).ToListAsync();
             List<StudentModel> appliedJobs=(from Aj in dbContext.AppliedJobs where Aj.Job.Id ==jobId 
-                                            && !Aj.User.DeleteStatus
+                                            && !Aj.User.DeleteStatus 
+                                            && !Aj.Job.DeleteStatus 
+                                            && !interviews.Contains(Aj.User.Id)
                                             select new StudentModel
                                             {
+                                                AppliedId=Aj.Id,
                                                 StudentId=Aj.User.Id,
                                                 Resume=Aj.User.Resume,
                                                 FullName=Aj.User.FullName,
