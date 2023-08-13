@@ -88,7 +88,7 @@ namespace JobPortal.Repositories
                                               CompanyId=c.Id,
                                               CompanyName=c.Name,
                                               Salary=aj.Job.Salary,
-                                              NoOfApplicants = aj.Id,
+                                              NoOfApplicants = (from ajs in dbContext.AppliedJobs where ajs.Job.Id==aj.Job.Id select aj.Id).ToList().Count,
                                               RequiredSkills = (from rs in dbContext.JobSkills where rs.job.Id == aj.Job.Id select rs.Skill.Name).ToList()
 
                                           }
