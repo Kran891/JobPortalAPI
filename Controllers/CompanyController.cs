@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobPortal.Controllers
 {
-    
+
     [Route("[controller]/[action]")]
     // [Authorize(Policy ="Company")]
     public class CompanyController : Controller
@@ -21,12 +21,12 @@ namespace JobPortal.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> AddJob([FromBody]JobModel jobModel)
+        public async Task<IActionResult> AddJob([FromBody] JobModel jobModel)
         {
             try
             {
                 var data = await companyRepository.AddJob(jobModel);
-                return Ok(new {data = data});
+                return Ok(new { data = data });
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace JobPortal.Controllers
             try
             {
                 var data = await companyRepository.GetAllJobsByCompanyId(companyId);
-                return Ok(new {data = data});
+                return Ok(new { data = data });
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace JobPortal.Controllers
             try
             {
                 var data = await companyRepository.GetAllJobsByCompanyLocation(companyId, location);
-                return Ok(new {data = data});
+                return Ok(new { data = data });
             }
             catch (Exception ex)
             {
@@ -99,7 +99,7 @@ namespace JobPortal.Controllers
             try
             {
                 var data = await companyRepository.DeleteJob(jobId);
-                return Ok(new {data = data});
+                return Ok(new { data = data });
             }
             catch (Exception ex)
             {
@@ -107,15 +107,28 @@ namespace JobPortal.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> InsertCompany([FromBody]CompanyModel companymodel)
+        public async Task<IActionResult> InsertCompany([FromBody] CompanyModel companymodel)
         {
             try
             {
                 var data = await companyRepository.InsertCompany(companymodel);
-                return Ok(new {data = data});
-            }catch (Exception ex)
+                return Ok(new { data = data });
+            } catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet]
+        [Route("{jobId")]
+        public async Task<IActionResult> GetSheduledInterViews(int jobId)
+        {
+            try
+            {
+                var data =await companyRepository.GetSheduledInterViews(jobId);
+                return Ok(new { data = data });
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
             }
         }
 

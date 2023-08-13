@@ -110,6 +110,28 @@ namespace JobPortal.Repositories
             return companyLocations;
         }
 
+        public async Task<List<StudentModel>> GetSheduledInterViews(int jobId)
+        {
+            List<StudentModel> studentModels=(from i in dbContext.Interviews
+                                              where i.AppliedJob.Job.Id==jobId
+                                              where i.InterViewDate.Date>=DateTime.Today.Date
+                                              select new StudentModel
+                                              {
+                                                  Resume = i.AppliedJob.User.Resume,
+                                                  FullName = i.AppliedJob.User.FullName,
+                                                  studentskills = (from sk in dbContext.StudentSkills
+                                                                   where sk.user.Id == i.AppliedJob.User.Id
+                                                                   select sk.skill.Name).ToList(),
+                                                  PhoneNumber = i.AppliedJob.User.PhoneNumber,
+                                                  Email = i.AppliedJob.User.Email,
+                                                  InterViewDate = i.InterViewDate.ToLongDateString(),
+                                                  InterViewMode = i.InterViewMode.ToString(),
+                                                  InterViewLocation = i.InterViewLocation == null ? "" : i.InterViewLocation,
+
+                                              }).ToList();
+            return studentModels;
+        }
+
         public async Task<List<StudentModel>> GetStudentsAppliedForJob(int jobId)
         { 
             List<string> interviews=await(from i in dbContext.Interviews where i.AppliedJob.Job.Id==jobId select i.AppliedJob.User.Id).ToListAsync();
@@ -119,7 +141,7 @@ namespace JobPortal.Repositories
                                             && !interviews.Contains(Aj.User.Id)
                                             select new StudentModel
                                             {
-                                                AppliedId=Aj.Id,
+                                                AppliedId=Aj.Id, 
                                                 StudentId=Aj.User.Id,
                                                 Resume=Aj.User.Resume,
                                                 FullName=Aj.User.FullName,

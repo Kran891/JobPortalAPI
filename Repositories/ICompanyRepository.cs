@@ -12,6 +12,7 @@ namespace JobPortal.Repositories
         Task<List<StudentModel>> GetStudentsAppliedForJob(int jobId);
         Task<List<StudentModel>> GetSuggestionsForRole(int jobId);
         Task<List<string>> GetCompanyLocations(int companyId);
+        Task<List<StudentModel>> GetSheduledInterViews(int jobId);
         Task<int> DeleteJob(int jobId);
     }
 }
