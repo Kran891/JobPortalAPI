@@ -9,5 +9,8 @@
        public List<string> studentskills { get; set; }
        public List<string> preferredLocations { get; set; }
        public IFormFile ResumeFile { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Email { get; set; }
+
     }
 }

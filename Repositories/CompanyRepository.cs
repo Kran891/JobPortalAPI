@@ -121,9 +121,8 @@ namespace JobPortal.Repositories
                                                 FullName=Aj.User.FullName,
                                                 studentskills=(from sk in dbContext.StudentSkills where sk.user.Id==Aj.User.Id
                                                                select sk.skill.Name).ToList(),
-                                                preferredLocations=(from pl in dbContext.PreferredLocations where pl.User.Id==Aj.User.Id
-                                                                    select pl.Location.Name).ToList()
-
+                                                PhoneNumber=Aj.User.PhoneNumber,
+                                                Email=Aj.User.Email,
                                             }
                                             ).ToList();
             return appliedJobs;
