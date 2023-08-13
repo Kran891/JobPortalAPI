@@ -106,13 +106,14 @@ namespace JobPortal.Repositories
                                          select new JobModel
                                          {
                                              JobId = i.AppliedJob.Job.Id,
-                                             InterViewDate = i.InterViewDate,
+                                             InterViewDate = i.InterViewDate.ToLongDateString(),
                                              InterViewMode = i.InterViewMode.ToString(),
                                              CompanyName = c.Name,
                                              CompanyId = c.Id,
                                              Title = i.AppliedJob.Job.Title,
                                              Description = i.AppliedJob.Job.Description,
                                              Salary = i.AppliedJob.Job.Salary,
+                                             InterViewLocation = i.InterViewLocation==null ? "" : i.InterViewLocation,
                                              Locations = (from cl in dbContext.CompanyLocations where cl.Company.Id == c.Id select cl.Location.Name).ToList()
                                          }
                                          ).ToList();

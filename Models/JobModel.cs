@@ -14,9 +14,10 @@ namespace JobPortal.Models
         public int NoOfApplicants { get;  set; }
         public List<string>? Locations { get;  set; }
 
-        public DateTime InterViewDate { get; set; }
+        public string InterViewDate { get; set; }
         public DateTime PostedDate { get; set; }
 
         public string? InterViewMode { get; set; }
+        public string InterViewLocation { get; set; }
     }
 }
