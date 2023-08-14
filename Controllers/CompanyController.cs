@@ -33,6 +33,20 @@ namespace JobPortal.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost]
+
+        public async Task<IActionResult> ScheduleInterview([FromBody]InterViewModel interViewModel)
+        {
+            try
+            {
+                var data = await companyRepository.ScheduleInterview(interViewModel);
+                return Ok(new { data = data });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [Route("{companyId}")]
         [HttpGet]
         public async Task<IActionResult> GetAllJobsByCompanyId(int companyId)
