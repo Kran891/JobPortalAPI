@@ -89,7 +89,8 @@ namespace JobPortal.Repositories
                                               CompanyName=c.Name,
                                               Salary=aj.Job.Salary,
                                               NoOfApplicants = (from ajs in dbContext.AppliedJobs where ajs.Job.Id==aj.Job.Id select aj.Id).ToList().Count,
-                                              RequiredSkills = (from rs in dbContext.JobSkills where rs.job.Id == aj.Job.Id select rs.Skill.Name).ToList()
+                                              RequiredSkills = (from rs in dbContext.JobSkills where rs.job.Id == aj.Job.Id select rs.Skill.Name).ToList(),
+                                              Locations=(from cl in dbContext.CompanyLocations where cl.Company.Id==c.Id select cl.Location.Name).ToList()
 
                                           }
                                           ).ToList();
@@ -106,13 +107,14 @@ namespace JobPortal.Repositories
                                          select new JobModel
                                          {
                                              JobId = i.AppliedJob.Job.Id,
-                                             InterViewDate = i.InterViewDate.ToLongDateString(),
+                                             InterViewDate = i.InterViewDate.ToString("F"),
                                              InterViewMode = i.InterViewMode.ToString(),
                                              CompanyName = c.Name,
                                              CompanyId = c.Id,
                                              Title = i.AppliedJob.Job.Title,
                                              Description = i.AppliedJob.Job.Description,
                                              Salary = i.AppliedJob.Job.Salary,
+                                             RequiredSkills=(from r in dbContext.JobSkills where r.job.Id == i.AppliedJob.Job.Id select r.Skill.Name).ToList(),
                                              InterViewLocation = i.InterViewLocation==null ? "" : i.InterViewLocation,
                                              Locations = (from cl in dbContext.CompanyLocations where cl.Company.Id == c.Id select cl.Location.Name).ToList()
                                          }
