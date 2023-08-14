@@ -643,7 +643,7 @@ namespace JobPortal.Migrations
                         .IsRequired();
 
                     b.HasOne("JobPortal.Entities.Jobs", "job")
-                        .WithMany("RequiredSkills")
+                        .WithMany()
                         .HasForeignKey("jobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -802,11 +802,6 @@ namespace JobPortal.Migrations
             modelBuilder.Entity("JobPortal.Entities.Company", b =>
                 {
                     b.Navigation("Locations");
-                });
-
-            modelBuilder.Entity("JobPortal.Entities.Jobs", b =>
-                {
-                    b.Navigation("RequiredSkills");
                 });
 #pragma warning restore 612, 618
         }

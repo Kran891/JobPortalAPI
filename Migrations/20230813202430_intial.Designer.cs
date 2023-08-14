@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobPortal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230809083016_initial")]
-    partial class initial
+    [Migration("20230813202430_intial")]
+    partial class intial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -646,7 +646,7 @@ namespace JobPortal.Migrations
                         .IsRequired();
 
                     b.HasOne("JobPortal.Entities.Jobs", "job")
-                        .WithMany("RequiredSkills")
+                        .WithMany()
                         .HasForeignKey("jobId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -805,11 +805,6 @@ namespace JobPortal.Migrations
             modelBuilder.Entity("JobPortal.Entities.Company", b =>
                 {
                     b.Navigation("Locations");
-                });
-
-            modelBuilder.Entity("JobPortal.Entities.Jobs", b =>
-                {
-                    b.Navigation("RequiredSkills");
                 });
 #pragma warning restore 612, 618
         }

@@ -71,7 +71,7 @@ namespace JobPortal.Repositories
                                              Title = j.Title,
                                              JobId = j.Id,
                                              Description = j.Description,
-                                             NoOfApplicants = (from ja in dbContext.AppliedJobs where ja.Job == j select ja.Id).ToList().Count(),
+                                             NoOfApplicants = (from ja in dbContext.AppliedJobs where ja.Job == j select ja.Id).ToList().Count,
                                              Locations = (from c in dbContext.Companies
                                                           join
                                                         cl in dbContext.CompanyLocations on c.Id equals cl.Company.Id
@@ -97,7 +97,7 @@ namespace JobPortal.Repositories
                                             Title = j.Title,
                                             JobId = j.Id,
                                             Description = j.Description,
-                                            NoOfApplicants = (from ja in dbContext.AppliedJobs where ja.Job == j select ja.Id).ToList().Count(),
+                                            NoOfApplicants = (from ja in dbContext.AppliedJobs where ja.Job == j select ja.Id).ToList().Count,
                                             
                                         }
                                    ).ToListAsync();

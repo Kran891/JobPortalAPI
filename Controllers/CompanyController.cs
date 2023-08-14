@@ -119,7 +119,7 @@ namespace JobPortal.Controllers
             }
         }
         [HttpGet]
-        [Route("{jobId")]
+        [Route("{jobId}")]
         public async Task<IActionResult> GetSheduledInterViews(int jobId)
         {
             try
