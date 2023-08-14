@@ -122,7 +122,7 @@ namespace JobPortal.Repositories
                                                                    select sk.skill.Name).ToList(),
                                                   PhoneNumber = i.AppliedJob.User.PhoneNumber,
                                                   Email = i.AppliedJob.User.Email,
-                                                  InterViewDate = i.InterViewDate.ToLongDateString(),
+                                                  InterViewDate = i.InterViewDate.ToString("g"),
                                                   InterViewMode = i.InterViewMode.ToString(),
                                                   InterViewLocation = i.InterViewLocation == null ? "" : i.InterViewLocation,
 
@@ -210,7 +210,7 @@ namespace JobPortal.Repositories
             InterViewMode interViewMode;
             Interview interview = new Interview()
             {
-                InterViewDate = interViewModel.InterViewDate,
+                InterViewDate = interViewModel.InterViewDate.AddHours(18),
                 AppliedJob = applied.appliedJob
             };
             Enum.TryParse<InterViewMode>(interViewModel.InterViewMode, true,out interViewMode);
